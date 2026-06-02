@@ -6,43 +6,31 @@ export default async function handler(req, res) {
     const { difficulty } = req.body;
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-    let prompt = "";
-    if (difficulty === 'easy') {
-        prompt = `Generate a simple but engaging tactical scenario for a football management game. 
-Include: a catchy title, a 3-4 sentence detailed description of the match situation (score, time, momentum), opponent formation (e.g., "4-3-3"), 
-a small ASCII formation diagram, and an empty setbacks array.
-
-Be creative but realistic. Return ONLY JSON:
-{
-    "title": "Easy: [unique name]",
-    "description": "[3-4 sentences with specific details like '75th minute, you're down 1-0, opponent playing a compact 4-4-2...']",
-    "opponentFormation": "4-3-3",
-    "formationDiagram": "    GK\\n   CB CB\\nLB       RB\\n  CM CM CM\\n LW   ST   RW",
-    "setbacks": []
-}`;
-    } else if (difficulty === 'medium') {
-        prompt = `Generate a medium‑difficulty scenario with 1 meaningful setback (e.g., tired players, yellow cards, or a key player injured). 
-Use 4-5 sentences to build tension. Include formation and ASCII diagram.
-Return ONLY JSON:
-{
-    "title": "Medium: [name]",
-    "description": "[4-5 sentences describing the critical moment, the setback, and what's at stake]",
-    "opponentFormation": "4-4-2",
-    "formationDiagram": "...",
-    "setbacks": ["Your midfield has covered 12km each – pressing efficiency is 40% lower"]
-}`;
-    } else {
-        prompt = `Generate a HARD scenario with 2 or more serious setbacks (red card, key player benched, exhausted squad, etc.). 
-Make the description intense (6+ sentences). Use dramatic language.
-Return ONLY JSON:
-{
-    "title": "Hard: [name]",
-    "description": "[Very detailed, dramatic description of the nightmare situation]",
-    "opponentFormation": "3-5-2",
-    "formationDiagram": "...",
-    "setbacks": ["Red card – your captain sent off at 70'", "Star striker in terrible form – can't be subbed", "Two defenders on yellow cards"]
-}`;
+    if (!OPENROUTER_API_KEY) {
+        return res.status(500).json({ error: 'Missing OpenRouter API key' });
     }
+
+    const model = 'google/gemini-3-flash-preview';
+
+    const prompt = `Generate a unique, highly detailed tactical scenario for a football management game. 
+Difficulty: ${difficulty.toUpperCase()}
+Requirements:
+- Title: Creative and catchy (e.g., "The Catenaccio Trap", "High Press Suicide")
+- Description: 4-5 sentences with specific score, time, player conditions, and opponent behavior. Be vivid.
+- Formation: Realistic (e.g., "4-3-3", "3-5-2", "5-4-1")
+- Setbacks: If difficulty is 'medium', exactly 1 setback; if 'hard', 2 or 3 setbacks; if 'easy', empty array.
+- Formation diagram: Simple ASCII art (like the example).
+
+Return ONLY valid JSON. No extra text.
+
+Example of good formation diagram:
+    GK
+   CB CB
+LB      RB
+  CM CM
+LW   ST   RW
+
+Now generate a scenario. Make it original and dramatic.`;
 
     try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -54,40 +42,42 @@ Return ONLY JSON:
                 'X-Title': 'Tactical IQ Tester'
             },
             body: JSON.stringify({
-                model: 'google/gemini-2.0-flash-exp:free',
+                model: model,
                 messages: [{ role: 'user', content: prompt }],
-                temperature: 0.8
+                temperature: 0.9
             })
         });
 
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
         const data = await response.json();
         let aiResponse = data.choices[0].message.content;
         aiResponse = aiResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '');
         const result = JSON.parse(aiResponse);
         res.status(200).json(result);
     } catch (error) {
-        // Enhanced fallback scenarios
+        console.error('Scenario generation error:', error);
+        // Fallback scenarios (same as before)
         const fallbacks = {
             easy: {
-                title: "Easy: First Half Pressure",
-                description: "42nd minute, 0-0. The opponent is pressing high but leaving gaps behind. Your wingers have clear pace advantage. The home crowd is getting anxious.",
+                title: "Easy: The Early Kickoff Fog",
+                description: "8th minute, still 0-0. The opposition is playing a high line with a slow center-back. Your striker has 15 pace advantage. The morning fog is lifting, but your players are still sleepy.",
                 opponentFormation: "4-3-3",
                 formationDiagram: "    GK\n   CB CB\nLB       RB\n  CM CM CM\n LW   ST   RW",
                 setbacks: []
             },
             medium: {
-                title: "Medium: Second Half Survival",
-                description: "75th minute, you're leading 1-0 away. The opponent has brought on two fresh wingers. Your midfield has covered 12km each – pressing efficiency is 40% lower. They are throwing everything forward.",
+                title: "Medium: The Yellow Card Minefield",
+                description: "65th minute, 1-1. Three of your key players are on yellow cards. The opposition is targeting them with aggressive dribbles. Your left-back is one foul away from suspension. The crowd is roaring for every tackle.",
                 opponentFormation: "4-4-2",
                 formationDiagram: "    GK\n   CB CB\nLB       RB\nLM  CM CM  RM\n   ST ST",
-                setbacks: ["Tired midfield – pressing efficiency dropped 40%"]
+                setbacks: ["Three players on yellow cards (including captain)", "Opposition winger has 90% dribble success rate"]
             },
             hard: {
-                title: "Hard: Relegation Nightmare",
-                description: "80th minute, you're 2-0 down. Your best defender was sent off at 70'. Your star striker is playing terribly (2.5 rating) but can't be subbed. Two other players are on yellow cards. The away fans are chanting 'You're getting sacked in the morning'. The pressure is immense.",
+                title: "Hard: The 9-Man War",
+                description: "82nd minute, 2-2, but you have TWO red cards. Your goalkeeper is the only senior player left. The opposition has brought on a 6'5\" target man. Your center-backs are both 18-year-olds making their debut. The stadium is a cauldron of noise. You are clinging on.",
                 opponentFormation: "3-5-2",
                 formationDiagram: "    GK\n  CB CB CB\nLWB         RWB\n  CM CM CM\n    ST ST",
-                setbacks: ["Red card (75th min) – playing with 10 men", "Star striker in terrible form – can't be subbed", "Two players on yellow cards"]
+                setbacks: ["Two red cards (playing with 9 men)", "Both center-backs are academy debutants", "Goalkeeper has a broken finger"]
             }
         };
         res.status(200).json(fallbacks[difficulty]);
