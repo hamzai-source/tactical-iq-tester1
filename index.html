@@ -122,13 +122,6 @@
             margin-bottom: 0;
         }
 
-        .btn-danger {
-            background: var(--accent-red);
-        }
-        .btn-danger:active {
-            background: #b91c1c;
-        }
-
         /* Login Screen */
         .login-header {
             text-align: center;
@@ -432,8 +425,8 @@
         <!-- Login Form -->
         <div id="login-form">
             <div class="input-group">
-                <label>EMAIL / USERNAME</label>
-                <input type="text" id="login-email" placeholder="Enter your email">
+                <label>EMAIL</label>
+                <input type="email" id="login-email" placeholder="Enter your email">
             </div>
             <div class="input-group">
                 <label>PASSWORD</label>
@@ -458,7 +451,7 @@
             </div>
             <div class="input-group">
                 <label>PASSWORD</label>
-                <input type="password" id="register-password" placeholder="Create a password">
+                <input type="password" id="register-password" placeholder="Create a password (min 6 chars)">
             </div>
             <button class="btn" id="register-btn">REGISTER →</button>
             <div class="register-link">
@@ -596,9 +589,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // ============ YOUR SUPABASE CREDENTIALS (INSERTED) ============
-    const SUPABASE_URL = "https://vvensobffgbdziwstmkm.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2ZW5zb2JmZmdiZHppd3N0bWttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTY5NjgsImV4cCI6MjA5NTk3Mjk2OH0.xb46TQTHbfBJ85qWruhP0c8rZUcbVAfRCIbPcxQspQI";
+    // ============ YOUR NEW SUPABASE CREDENTIALS ============
+    const SUPABASE_URL = "https://fysfpmsuhaxwtcnhhcek.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5c2ZwbXN1aGF4d3RjbmhoY2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDQ4MDIsImV4cCI6MjA5NTk4MDgwMn0.QeBUEiehAcNG0wnvXiX9Dz1GgthF_Bw_PfVk3fa19os";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
@@ -624,7 +617,6 @@
                 email: email,
                 password: password
             });
-            
             if (error) throw error;
             
             // Fetch manager profile
@@ -646,7 +638,7 @@
                     highestRating: profile.highest_rating
                 };
             } else {
-                // Create new profile
+                // Create new profile if missing
                 const { data: newProfile, error: createError } = await supabase
                     .from('manager_profiles')
                     .insert([{
@@ -659,9 +651,7 @@
                     }])
                     .select()
                     .single();
-                
                 if (createError) throw createError;
-                
                 manager = {
                     id: newProfile.user_id,
                     username: newProfile.username,
@@ -685,11 +675,8 @@
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
-                options: {
-                    data: { username: username }
-                }
+                options: { data: { username: username } }
             });
-            
             if (error) throw error;
             
             // Create manager profile
@@ -703,7 +690,6 @@
                     matches: 0,
                     highest_rating: 0
                 }]);
-            
             if (profileError) throw profileError;
             
             return { success: true };
@@ -720,7 +706,6 @@
     
     async function saveManagerProgress() {
         if (!currentUser) return;
-        
         await supabase
             .from('manager_profiles')
             .update({
@@ -755,12 +740,10 @@
             needed = manager.level * 100;
             leveled = true;
         }
-        
         if (leveled) {
             let msg = document.getElementById('level-up-message');
             if (msg) msg.innerHTML = `🎉 LEVEL UP! You are now Level ${manager.level}! 🎉`;
         }
-        
         saveManagerProgress();
         updateUI();
     }
@@ -798,12 +781,10 @@
     document.getElementById('login-btn')?.addEventListener('click', async () => {
         const email = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
-        
         if (!email || !password) {
             document.getElementById('login-error').innerHTML = 'Please enter email and password';
             return;
         }
-        
         const result = await login(email, password);
         if (result.success) {
             navigate('screen-menu');
@@ -816,27 +797,32 @@
         const username = document.getElementById('register-username').value.trim();
         const email = document.getElementById('register-email').value.trim();
         const password = document.getElementById('register-password').value;
+        document.getElementById('register-error').innerHTML = '';
+        document.getElementById('register-success').innerHTML = '';
         
         if (!username || !email || !password) {
-            document.getElementById('register-error').innerHTML = 'Please fill all fields';
+            document.getElementById('register-error').innerHTML = '⚠️ Please fill all fields';
             return;
         }
-        
         if (password.length < 6) {
-            document.getElementById('register-error').innerHTML = 'Password must be at least 6 characters';
+            document.getElementById('register-error').innerHTML = '⚠️ Password must be at least 6 characters';
+            return;
+        }
+        if (!email.includes('@')) {
+            document.getElementById('register-error').innerHTML = '⚠️ Please enter a valid email';
             return;
         }
         
         const result = await register(username, email, password);
         if (result.success) {
-            document.getElementById('register-success').innerHTML = 'Account created! Please login.';
-            document.getElementById('register-error').innerHTML = '';
-            // Switch to login form after 2 seconds
+            document.getElementById('register-success').innerHTML = '✅ Account created! Please login.';
             setTimeout(() => {
                 document.getElementById('show-login').click();
             }, 2000);
         } else {
-            document.getElementById('register-error').innerHTML = result.error;
+            let errMsg = result.error;
+            if (errMsg.includes('User already registered')) errMsg = '⚠️ Email already registered. Login instead.';
+            document.getElementById('register-error').innerHTML = errMsg;
         }
     });
     
@@ -849,7 +835,6 @@
         currentDifficulty = difficulty;
         document.getElementById('difficulty-badge').innerHTML = difficulty.toUpperCase();
         navigate('screen-loading');
-    
         try {
             let response = await fetch('/api/generate-scenario', {
                 method: 'POST',
@@ -857,10 +842,8 @@
                 body: JSON.stringify({ difficulty: difficulty })
             });
             currentScenario = await response.json();
-            
             document.getElementById('scenario-title').innerHTML = currentScenario.title;
             document.getElementById('scenario-description').innerHTML = currentScenario.description;
-            
             let setbacksHtml = '';
             if (currentScenario.setbacks) {
                 currentScenario.setbacks.forEach(s => {
@@ -868,7 +851,6 @@
                 });
             }
             document.getElementById('setbacks-container').innerHTML = setbacksHtml;
-            
             let formationHtml = `<div style="text-align: center;"><strong>${currentScenario.opponentFormation}</strong></div><div style="margin-top: 12px;">`;
             if (currentScenario.formationDiagram) {
                 formationHtml += `<pre style="font-size: 11px; background: #05070f; padding: 12px; border-radius: 8px;">${currentScenario.formationDiagram}</pre>`;
@@ -887,7 +869,6 @@
             }
             formationHtml += `</div>`;
             document.getElementById('formation-diagram').innerHTML = formationHtml;
-            
             document.getElementById('tactics-input').value = '';
             navigate('screen-scenario');
         } catch (e) {
@@ -903,9 +884,7 @@
             alert("Please describe your tactical changes!");
             return;
         }
-        
         navigate('screen-loading');
-        
         try {
             let response = await fetch('/api/analyze', {
                 method: 'POST',
@@ -917,19 +896,14 @@
                     managerLevel: manager.level
                 })
             });
-            
             currentEvaluation = await response.json();
-            
             let ratingNum = parseFloat(currentEvaluation.rating);
-            
-            // Update UI
             document.getElementById('rating-value').innerHTML = currentEvaluation.rating;
             document.getElementById('match-narrative').innerHTML = currentEvaluation.narrative;
             document.getElementById('strengths-text').innerHTML = currentEvaluation.strengths;
             document.getElementById('weaknesses-text').innerHTML = currentEvaluation.weaknesses;
             document.getElementById('improvement-text').innerHTML = currentEvaluation.improvements;
             
-            // Roast based on rating
             let roastMessage = "";
             let roastEmoji = "🔥";
             if (ratingNum >= 8.5) {
@@ -963,7 +937,6 @@
                 banner.innerHTML = "💔 DEFEAT 💔";
             }
             
-            // XP Calculation based on rating
             let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXP(xpGain);
@@ -971,7 +944,6 @@
             manager.matches++;
             saveManagerProgress();
             updateUI();
-            
             navigate('screen-results');
         } catch (e) {
             console.error(e);
@@ -989,17 +961,15 @@
     window.nextScenario = nextScenario;
     window.navigate = navigate;
     
-    // Check if user is already logged in
+    // Auto-login if session exists
     async function checkSession() {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-            // User is logged in, fetch their profile
             const { data: profile } = await supabase
                 .from('manager_profiles')
                 .select('*')
                 .eq('user_id', session.user.id)
                 .single();
-            
             if (profile) {
                 manager = {
                     id: profile.user_id,
@@ -1015,7 +985,6 @@
             }
         }
     }
-    
     checkSession();
 </script>
 </body>
