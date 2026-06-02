@@ -162,22 +162,6 @@
             text-align: center;
             margin-top: 12px;
         }
-        .success-message {
-            color: var(--primary);
-            font-size: 12px;
-            text-align: center;
-            margin-top: 12px;
-        }
-        .register-link {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 13px;
-            color: var(--text-tertiary);
-        }
-        .register-link span {
-            color: var(--primary);
-            cursor: pointer;
-        }
 
         /* Profile Card */
         .profile-card {
@@ -325,7 +309,6 @@
             color: #f59e0b;
         }
 
-        /* Roast Box - Right under rating */
         .roast-box {
             background: linear-gradient(135deg, #1e1b2e, #0f0f1a);
             border: 2px solid var(--accent-orange);
@@ -408,61 +391,27 @@
 
         .text-secondary { color: var(--text-secondary); }
         .text-center { text-align: center; }
-        .mt-4 { margin-top: 16px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <!-- LOGIN SCREEN -->
+    <!-- LOGIN SCREEN (just username) -->
     <div id="screen-login" class="screen active">
         <div class="login-header">
             <div class="login-icon">⚽</div>
             <h1>TACTICAL IQ TESTER</h1>
             <p class="text-secondary">Test your managerial IQ against AI scenarios</p>
         </div>
-        
-        <!-- Login Form -->
-        <div id="login-form">
-            <div class="input-group">
-                <label>EMAIL</label>
-                <input type="email" id="login-email" placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label>PASSWORD</label>
-                <input type="password" id="login-password" placeholder="Enter your password">
-            </div>
-            <button class="btn" id="login-btn">LOGIN →</button>
-            <div class="register-link">
-                Don't have an account? <span id="show-register">Create one</span>
-            </div>
-            <div id="login-error" class="error-message"></div>
+        <div class="input-group">
+            <label>MANAGER NAME</label>
+            <input type="text" id="input-username" placeholder="Enter your name">
         </div>
-
-        <!-- Register Form (hidden initially) -->
-        <div id="register-form" style="display: none;">
-            <div class="input-group">
-                <label>USERNAME</label>
-                <input type="text" id="register-username" placeholder="Choose a username">
-            </div>
-            <div class="input-group">
-                <label>EMAIL</label>
-                <input type="email" id="register-email" placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label>PASSWORD</label>
-                <input type="password" id="register-password" placeholder="Create a password (min 6 chars)">
-            </div>
-            <button class="btn" id="register-btn">REGISTER →</button>
-            <div class="register-link">
-                Already have an account? <span id="show-login">Login</span>
-            </div>
-            <div id="register-error" class="error-message"></div>
-            <div id="register-success" class="success-message"></div>
-        </div>
+        <button class="btn" id="loginBtn">START MANAGING →</button>
+        <div id="login-error" class="error-message"></div>
     </div>
 
-    <!-- MAIN MENU SCREEN -->
+    <!-- MAIN MENU -->
     <div id="screen-menu" class="screen">
         <div class="profile-card">
             <div class="profile-header">
@@ -482,20 +431,17 @@
 
         <div class="difficulty-card easy" onclick="selectDifficulty('easy')">
             <div class="difficulty-title" style="color: #10b981;">EASY</div>
-            <div class="difficulty-desc">Basic scenario • No major setbacks • Perfect for learning</div>
+            <div class="difficulty-desc">Basic scenario • No major setbacks</div>
         </div>
-
         <div class="difficulty-card medium" onclick="selectDifficulty('medium')">
             <div class="difficulty-title" style="color: #f59e0b;">MEDIUM</div>
-            <div class="difficulty-desc">Detailed scenario • 1 setback (tired players, yellow cards)</div>
+            <div class="difficulty-desc">1 setback (tired players, yellow cards)</div>
         </div>
-
         <div class="difficulty-card hard" onclick="selectDifficulty('hard')">
             <div class="difficulty-title" style="color: #dc2626;">HARD</div>
-            <div class="difficulty-desc">Brutal scenario • 2+ setbacks (red cards, injuries, exhausted squad)</div>
+            <div class="difficulty-desc">2+ setbacks (red cards, injuries)</div>
         </div>
-
-        <button class="btn btn-secondary" id="logout-btn" style="margin-top: 16px;">Sign Out</button>
+        <button class="btn btn-secondary" id="reset-progress-btn" style="margin-top: 16px;">Reset Progress</button>
     </div>
 
     <!-- SCENARIO SCREEN -->
@@ -504,82 +450,47 @@
             <span class="level-badge" id="difficulty-badge">EASY</span>
             <span class="level-badge" style="border-color: var(--accent-blue);">OPPONENT FORMATION</span>
         </div>
-        
         <div class="scenario-card">
             <h2 id="scenario-title">Loading scenario...</h2>
             <div id="setbacks-container" style="margin: 8px 0;"></div>
             <p id="scenario-description" class="text-secondary" style="font-size: 13px; line-height: 1.5;"></p>
         </div>
-
         <div class="formation-image" id="formation-image">
             <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">Opponent Formation</div>
             <div id="formation-diagram" class="formation-diagram">⚽ Loading formation... ⚽</div>
         </div>
-
         <h3>YOUR TACTICAL CHANGES</h3>
-        <textarea id="tactics-input" rows="5" placeholder="Example: 'Drop into a low block, instruct fullbacks to tuck inside, target man up top for long balls, switch to 5-4-1...'"></textarea>
-        
+        <textarea id="tactics-input" rows="5" placeholder="Describe your tactical plan..."></textarea>
         <button class="btn" onclick="submitTactics()">SUBMIT TO AI REVIEWER →</button>
         <button class="btn btn-secondary" onclick="navigate('screen-menu')">Cancel</button>
     </div>
 
-    <!-- LOADING SCREEN -->
+    <!-- LOADING -->
     <div id="screen-loading" class="screen">
         <div class="loading-container">
             <div class="spinner"></div>
             <h2>AI is analyzing your tactics...</h2>
-            <p class="text-secondary" style="text-align: center;">Gemini AI reviewing your managerial decisions</p>
+            <p class="text-secondary">Gemini AI reviewing your decisions</p>
         </div>
     </div>
 
-    <!-- RESULTS SCREEN -->
+    <!-- RESULTS -->
     <div id="screen-results" class="screen">
         <h1 style="font-size: 24px;">MATCH REVIEW</h1>
-        
         <div class="rating-container">
-            <div>
-                <h2 style="margin-bottom: 4px;">Tactical Rating</h2>
-                <p class="text-secondary" style="font-size: 11px;">AI Performance Score</p>
-            </div>
-            <div class="rating-box">
-                <div class="rating-score" id="rating-value">--</div>
-                <div style="font-size: 10px;">/ 10</div>
-            </div>
+            <div><h2 style="margin-bottom: 4px;">Tactical Rating</h2><p class="text-secondary" style="font-size: 11px;">AI Performance Score</p></div>
+            <div class="rating-box"><div class="rating-score" id="rating-value">--</div><div style="font-size: 10px;">/ 10</div></div>
         </div>
-
-        <!-- ROAST BOX - Directly under rating -->
-        <div class="roast-box">
-            <span class="roast-emoji">🔥</span>
-            <span class="roast-text" id="roast-text">Loading roast...</span>
-        </div>
-
+        <div class="roast-box"><span class="roast-emoji">🔥</span><span class="roast-text" id="roast-text">Loading roast...</span></div>
         <div class="result-banner" id="result-banner">PROCESSING</div>
-
-        <div class="analysis-card">
-            <div class="analysis-title" style="color: #10b981;">📖 MATCH NARRATIVE</div>
-            <div class="analysis-text" id="match-narrative"></div>
-        </div>
-
-        <div class="analysis-card">
-            <div class="analysis-title" style="color: #3b82f6;">✅ WHAT YOU DID RIGHT</div>
-            <div class="analysis-text" id="strengths-text"></div>
-        </div>
-
-        <div class="analysis-card">
-            <div class="analysis-title" style="color: #dc2626;">❌ WHAT YOU MISSED</div>
-            <div class="analysis-text" id="weaknesses-text"></div>
-        </div>
-
-        <div class="analysis-card">
-            <div class="analysis-title" style="color: #f59e0b;">💡 WHAT YOU COULD HAVE DONE DIFFERENTLY</div>
-            <div class="analysis-text" id="improvement-text"></div>
-        </div>
-
+        <div class="analysis-card"><div class="analysis-title" style="color: #10b981;">📖 MATCH NARRATIVE</div><div class="analysis-text" id="match-narrative"></div></div>
+        <div class="analysis-card"><div class="analysis-title" style="color: #3b82f6;">✅ WHAT YOU DID RIGHT</div><div class="analysis-text" id="strengths-text"></div></div>
+        <div class="analysis-card"><div class="analysis-title" style="color: #dc2626;">❌ WHAT YOU MISSED</div><div class="analysis-text" id="weaknesses-text"></div></div>
+        <div class="analysis-card"><div class="analysis-title" style="color: #f59e0b;">💡 WHAT YOU COULD HAVE DONE DIFFERENTLY</div><div class="analysis-text" id="improvement-text"></div></div>
         <div class="profile-card" style="margin-top: 8px; text-align: center;">
             <div>🏆 XP EARNED: <strong id="xp-earned">0</strong></div>
             <div id="level-up-message" style="color: #f59e0b; font-size: 12px; margin-top: 4px;"></div>
         </div>
-
         <div class="action-buttons">
             <button class="btn" onclick="nextScenario()">NEXT SCENARIO →</button>
             <button class="btn btn-secondary" onclick="navigate('screen-menu')">MAIN MENU</button>
@@ -587,139 +498,37 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // ============ YOUR NEW SUPABASE CREDENTIALS ============
-    const SUPABASE_URL = "https://fysfpmsuhaxwtcnhhcek.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5c2ZwbXN1aGF4d3RjbmhoY2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDQ4MDIsImV4cCI6MjA5NTk4MDgwMn0.QeBUEiehAcNG0wnvXiX9Dz1GgthF_Bw_PfVk3fa19os";
-    
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    // ============ MANAGER STATE ============
-    let currentUser = null;
+    // ============ MANAGER SAVED IN LOCALSTORAGE ============
     let manager = {
-        id: null,
-        username: "",
+        name: "Manager",
         xp: 0,
         level: 1,
         matches: 0,
         highestRating: 0
     };
-    
+
     let currentDifficulty = "";
     let currentScenario = null;
     let currentEvaluation = null;
 
-    // ============ AUTH FUNCTIONS ============
-    async function login(email, password) {
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-            if (error) throw error;
-            
-            // Fetch manager profile
-            const { data: profile, error: profileError } = await supabase
-                .from('manager_profiles')
-                .select('*')
-                .eq('user_id', data.user.id)
-                .single();
-            
-            if (profileError && profileError.code !== 'PGRST116') throw profileError;
-            
-            if (profile) {
-                manager = {
-                    id: profile.user_id,
-                    username: profile.username,
-                    xp: profile.xp,
-                    level: profile.level,
-                    matches: profile.matches,
-                    highestRating: profile.highest_rating
-                };
-            } else {
-                // Create new profile if missing
-                const { data: newProfile, error: createError } = await supabase
-                    .from('manager_profiles')
-                    .insert([{
-                        user_id: data.user.id,
-                        username: email.split('@')[0],
-                        xp: 0,
-                        level: 1,
-                        matches: 0,
-                        highest_rating: 0
-                    }])
-                    .select()
-                    .single();
-                if (createError) throw createError;
-                manager = {
-                    id: newProfile.user_id,
-                    username: newProfile.username,
-                    xp: newProfile.xp,
-                    level: newProfile.level,
-                    matches: newProfile.matches,
-                    highestRating: newProfile.highest_rating
-                };
-            }
-            
-            currentUser = data.user;
-            updateUI();
-            return { success: true };
-        } catch (error) {
-            return { success: false, error: error.message };
+    function saveManager() {
+        localStorage.setItem('tacticalManager', JSON.stringify(manager));
+    }
+
+    function loadManager() {
+        const saved = localStorage.getItem('tacticalManager');
+        if (saved) {
+            manager = JSON.parse(saved);
+        } else {
+            // Default values
+            manager = { name: "Manager", xp: 0, level: 1, matches: 0, highestRating: 0 };
         }
+        updateUI();
     }
-    
-    async function register(username, email, password) {
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: { data: { username: username } }
-            });
-            if (error) throw error;
-            
-            // Create manager profile
-            const { error: profileError } = await supabase
-                .from('manager_profiles')
-                .insert([{
-                    user_id: data.user.id,
-                    username: username,
-                    xp: 0,
-                    level: 1,
-                    matches: 0,
-                    highest_rating: 0
-                }]);
-            if (profileError) throw profileError;
-            
-            return { success: true };
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
-    }
-    
-    async function logout() {
-        await supabase.auth.signOut();
-        currentUser = null;
-        navigate('screen-login');
-    }
-    
-    async function saveManagerProgress() {
-        if (!currentUser) return;
-        await supabase
-            .from('manager_profiles')
-            .update({
-                xp: manager.xp,
-                level: manager.level,
-                matches: manager.matches,
-                highest_rating: manager.highestRating
-            })
-            .eq('user_id', currentUser.id);
-    }
-    
-    // ============ UI FUNCTIONS ============
+
     function updateUI() {
-        document.getElementById('profile-name').innerHTML = manager.username;
+        document.getElementById('profile-name').innerHTML = manager.name;
         document.getElementById('profile-level').innerHTML = `Level ${manager.level}`;
         let needed = manager.level * 100;
         let percent = Math.min((manager.xp / needed) * 100, 100);
@@ -729,7 +538,7 @@
         document.getElementById('profile-matches').innerHTML = manager.matches;
         document.getElementById('profile-high').innerHTML = manager.highestRating;
     }
-    
+
     function addXP(amount) {
         manager.xp += amount;
         let needed = manager.level * 100;
@@ -744,93 +553,46 @@
             let msg = document.getElementById('level-up-message');
             if (msg) msg.innerHTML = `🎉 LEVEL UP! You are now Level ${manager.level}! 🎉`;
         }
-        saveManagerProgress();
+        saveManager();
         updateUI();
     }
-    
+
     function updateHighestRating(rating) {
         if (rating > manager.highestRating) {
             manager.highestRating = rating;
-            saveManagerProgress();
+            saveManager();
             updateUI();
         }
     }
-    
+
     function navigate(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
     }
-    
-    // ============ AUTH UI HANDLERS ============
-    document.getElementById('show-register')?.addEventListener('click', () => {
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('register-form').style.display = 'block';
-        document.getElementById('login-error').innerHTML = '';
-        document.getElementById('register-error').innerHTML = '';
-        document.getElementById('register-success').innerHTML = '';
-    });
-    
-    document.getElementById('show-login')?.addEventListener('click', () => {
-        document.getElementById('login-form').style.display = 'block';
-        document.getElementById('register-form').style.display = 'none';
-        document.getElementById('login-error').innerHTML = '';
-        document.getElementById('register-error').innerHTML = '';
-        document.getElementById('register-success').innerHTML = '';
-    });
-    
-    document.getElementById('login-btn')?.addEventListener('click', async () => {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value;
-        if (!email || !password) {
-            document.getElementById('login-error').innerHTML = 'Please enter email and password';
+
+    // Login
+    document.getElementById('loginBtn').onclick = () => {
+        let name = document.getElementById('input-username').value.trim();
+        if (name === "") {
+            document.getElementById('login-error').innerHTML = "Please enter a manager name";
             return;
         }
-        const result = await login(email, password);
-        if (result.success) {
-            navigate('screen-menu');
-        } else {
-            document.getElementById('login-error').innerHTML = result.error;
+        manager.name = name;
+        saveManager();
+        updateUI();
+        navigate('screen-menu');
+    };
+
+    // Reset progress
+    document.getElementById('reset-progress-btn').onclick = () => {
+        if (confirm("Are you sure you want to reset ALL your progress? This cannot be undone.")) {
+            manager = { name: manager.name, xp: 0, level: 1, matches: 0, highestRating: 0 };
+            saveManager();
+            updateUI();
         }
-    });
-    
-    document.getElementById('register-btn')?.addEventListener('click', async () => {
-        const username = document.getElementById('register-username').value.trim();
-        const email = document.getElementById('register-email').value.trim();
-        const password = document.getElementById('register-password').value;
-        document.getElementById('register-error').innerHTML = '';
-        document.getElementById('register-success').innerHTML = '';
-        
-        if (!username || !email || !password) {
-            document.getElementById('register-error').innerHTML = '⚠️ Please fill all fields';
-            return;
-        }
-        if (password.length < 6) {
-            document.getElementById('register-error').innerHTML = '⚠️ Password must be at least 6 characters';
-            return;
-        }
-        if (!email.includes('@')) {
-            document.getElementById('register-error').innerHTML = '⚠️ Please enter a valid email';
-            return;
-        }
-        
-        const result = await register(username, email, password);
-        if (result.success) {
-            document.getElementById('register-success').innerHTML = '✅ Account created! Please login.';
-            setTimeout(() => {
-                document.getElementById('show-login').click();
-            }, 2000);
-        } else {
-            let errMsg = result.error;
-            if (errMsg.includes('User already registered')) errMsg = '⚠️ Email already registered. Login instead.';
-            document.getElementById('register-error').innerHTML = errMsg;
-        }
-    });
-    
-    document.getElementById('logout-btn')?.addEventListener('click', () => {
-        logout();
-    });
-    
-    // ============ GAME FUNCTIONS ============
+    };
+
+    // Difficulty selection
     async function selectDifficulty(difficulty) {
         currentDifficulty = difficulty;
         document.getElementById('difficulty-badge').innerHTML = difficulty.toUpperCase();
@@ -877,7 +639,7 @@
             navigate('screen-menu');
         }
     }
-    
+
     async function submitTactics() {
         let tactics = document.getElementById('tactics-input').value.trim();
         if (!tactics) {
@@ -936,13 +698,12 @@
                 banner.className = "result-banner lose";
                 banner.innerHTML = "💔 DEFEAT 💔";
             }
-            
             let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXP(xpGain);
             updateHighestRating(ratingNum);
             manager.matches++;
-            saveManagerProgress();
+            saveManager();
             updateUI();
             navigate('screen-results');
         } catch (e) {
@@ -951,41 +712,17 @@
             navigate('screen-menu');
         }
     }
-    
+
     function nextScenario() {
         selectDifficulty(currentDifficulty);
     }
-    
+
     window.selectDifficulty = selectDifficulty;
     window.submitTactics = submitTactics;
     window.nextScenario = nextScenario;
     window.navigate = navigate;
-    
-    // Auto-login if session exists
-    async function checkSession() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            const { data: profile } = await supabase
-                .from('manager_profiles')
-                .select('*')
-                .eq('user_id', session.user.id)
-                .single();
-            if (profile) {
-                manager = {
-                    id: profile.user_id,
-                    username: profile.username,
-                    xp: profile.xp,
-                    level: profile.level,
-                    matches: profile.matches,
-                    highestRating: profile.highest_rating
-                };
-                currentUser = session.user;
-                updateUI();
-                navigate('screen-menu');
-            }
-        }
-    }
-    checkSession();
+
+    loadManager();
 </script>
 </body>
 </html>
