@@ -6,38 +6,29 @@ export default async function handler(req, res) {
     const { difficulty, scenario, tactics, managerLevel } = req.body;
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-    const prompt = `You are a brutally honest, world‑class football tactical analyst. Your job is to evaluate the manager's submitted tactical plan in extreme detail.
+    const prompt = `You are a brilliant, poetic football tactical analyst. Your task is to evaluate the manager's submitted plan and produce a **dramatic, detailed, formation‑specific match narrative** in the style of a tactical genius.
 
 DIFFICULTY: ${difficulty.toUpperCase()}
 OPPONENT FORMATION: ${scenario.opponentFormation}
 SETBACKS: ${scenario.setbacks ? scenario.setbacks.join(', ') : 'None'}
-SCENARIO DESCRIPTION: ${scenario.description}
+SCENARIO CONTEXT: ${scenario.description}
+MANAGER'S TACTICS: "${tactics}"
 MANAGER LEVEL: ${managerLevel}
 
-THE MANAGER'S TACTICAL PLAN:
-"${tactics}"
-
-Now, write a highly detailed, specific evaluation. DO NOT use generic sentences. Quote specific parts of the manager's plan. Explain exactly why something worked or failed.
-
-Return ONLY valid JSON in this exact structure:
+Now, **ignore generic feedback**. Instead, write a vivid, step‑by‑step breakdown of what happened in the match based on their tactics. Use dramatic language, formations, and specific moments. **The response must be ONLY valid JSON** with these fields:
 
 {
-    "rating": 7.5,
+    "rating": (number 1-10),
     "outcome": "WIN/DRAW/LOSS",
-    "narrative": "3-4 sentence dramatic match narrative that directly references the manager's tactical instructions (quote them)",
-    "strengths": "2-3 bullet points (use •) that quote the manager's specific good ideas and explain why they worked",
-    "weaknesses": "2-3 bullet points that quote what the manager missed or did wrong, explaining the tactical consequence",
-    "improvements": "2-3 bullet points with very specific alternative actions the manager should have taken"
+    "tacticalBoard": "A detailed, visually formatted tactical explanation (use ASCII art if helpful) describing how the manager's setup worked or failed against the opponent's formation. Explain specific positional battles, pressing traps, or structural weaknesses exploited. Minimum 6 lines, be creative.",
+    "whyItWorkedOrFailed": "2-3 paragraphs explaining exactly why the tactics succeeded or collapsed. Reference the manager's own words. Describe the key moments (e.g., '83rd minute – your deep block baited their overload...'), player movements, and tactical shifts.",
+    "dramaSequence": "A thrilling, minute‑by‑minute narrative of the final 10-15 minutes of the match (from the scenario's time onward). Include specific actions (a tackle, a long ball, a substitution). End with the final score and emotional reaction."
 }
 
-Requirements:
-- Rating between 1.0 and 10.0 (1 = disaster, 10 = genius).
-- The narrative must include a dramatic timeline (e.g., '75' — ...') and show the result of the tactics.
-- Strengths/weaknesses must reference the manager's own words (use quotes from their plan).
-- If the plan is vague, the rating should be low (3-4) and the weaknesses should explain why vagueness is bad.
-- Be entertaining but educational. Roast them only if they deserve it.
-
-IMPORTANT: The response MUST be ONLY the JSON object. No extra text.`;
+IMPORTANT: 
+- If the tactics are vague or poor, the outcome should be a loss or draw, but still give a detailed, entertaining explanation.
+- Use formations like "3-4-2", "low block", "counter‑pressing" appropriately.
+- The response MUST be pure JSON – no extra text.`
 
     try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -51,7 +42,7 @@ IMPORTANT: The response MUST be ONLY the JSON object. No extra text.`;
             body: JSON.stringify({
                 model: 'google/gemini-2.0-flash-exp:free',
                 messages: [{ role: 'user', content: prompt }],
-                temperature: 0.85
+                temperature: 0.9
             })
         });
 
@@ -62,14 +53,13 @@ IMPORTANT: The response MUST be ONLY the JSON object. No extra text.`;
         res.status(200).json(result);
     } catch (error) {
         console.error('AI Error:', error);
-        // Detailed fallback – still better than generic
+        // Fallback with proper structure
         res.status(200).json({
             rating: 5.5,
             outcome: "DRAW",
-            narrative: "Your plan lacked detail. The opposition exploited your vague instructions and held you to a draw.",
-            strengths: "• You submitted a plan – that's effort.\n• Basic formation recognition was present.",
-            weaknesses: "• You didn't specify any pressing triggers or defensive width.\n• Your instructions were too general to execute.",
-            improvements: "• Be specific: 'drop into a 5-4-1 low block', 'instruct fullbacks to tuck inside'.\n• Mention how to counter the opponent's specific formation (e.g., overload the flanks)."
+            tacticalBoard: "🔻 THE TACTICAL SETUP\nYou placed your team in a vague, undefined shape. The opponent's 4-4-2 easily passed around your non-existent press. Your defensive line held too high without cover.\n\nPlaintext\n[Opponent CM] ---> [Your exposed DM space]\nv\n[Easy through ball]",
+            whyItWorkedOrFailed: "Your plan lacked specific instructions. Without clear triggers, your players hesitated. The opponent scored from a simple cross in the 85th minute. You failed to adjust to their width.",
+            dramaSequence: "84' – A hopeful long ball drifts over your static backline. Their striker outmuscles your defender and slots home. 1-0 down.\n90+3' – A desperate long throw into the box is scrambled in for a scrappy equaliser. Final whistle: 1-1. A point salvaged, but the performance was unconvincing."
         });
     }
 }
