@@ -23,6 +23,7 @@
             --accent-gold: #f59e0b;
             --accent-red: #dc2626;
             --accent-blue: #3b82f6;
+            --accent-orange: #ea580c;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-tertiary: #5b6c8f;
@@ -51,7 +52,7 @@
 
         @media (min-width: 768px) {
             .app-container {
-                max-width: 500px;
+                max-width: 550px;
                 margin: 0 auto;
             }
         }
@@ -121,6 +122,13 @@
             margin-bottom: 0;
         }
 
+        .btn-danger {
+            background: var(--accent-red);
+        }
+        .btn-danger:active {
+            background: #b91c1c;
+        }
+
         /* Login Screen */
         .login-header {
             text-align: center;
@@ -154,6 +162,28 @@
         }
         .input-group input:focus {
             border-color: var(--primary);
+        }
+        .error-message {
+            color: var(--accent-red);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 12px;
+        }
+        .success-message {
+            color: var(--primary);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 12px;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+        .register-link span {
+            color: var(--primary);
+            cursor: pointer;
         }
 
         /* Profile Card */
@@ -240,52 +270,22 @@
             margin-bottom: 8px;
         }
         .formation-image {
-            background: #143520;
+            background: #0a0f18;
             border-radius: 16px;
             padding: 16px;
             margin: 12px 0;
             text-align: center;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         .formation-diagram {
             font-family: monospace;
-            font-size: 12px;
+            font-size: 11px;
             white-space: pre;
             color: var(--text-secondary);
-            background: #0a0f18;
+            background: #05070f;
             padding: 16px;
             border-radius: 12px;
             width: 100%;
             overflow-x: auto;
-        }
-        .pitch-simple {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-        .pitch-row {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .pitch-player-icon {
-            width: 40px;
-            height: 40px;
-            background: #dc2626;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
         }
 
         textarea {
@@ -312,25 +312,46 @@
             justify-content: space-between;
             background: linear-gradient(135deg, #171f35, #121829);
             border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
         }
         .rating-box {
             background: rgba(245, 158, 11, 0.1);
             border: 3px solid #f59e0b;
             border-radius: 16px;
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
         .rating-score {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: 900;
             color: #f59e0b;
         }
+
+        /* Roast Box - Right under rating */
+        .roast-box {
+            background: linear-gradient(135deg, #1e1b2e, #0f0f1a);
+            border: 2px solid var(--accent-orange);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .roast-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fbbf24;
+            line-height: 1.4;
+        }
+        .roast-emoji {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
         .result-banner {
             text-align: center;
             font-size: 18px;
@@ -346,28 +367,21 @@
         .analysis-card {
             background: #171f35;
             border-radius: 16px;
-            padding: 14px;
+            padding: 16px;
             margin-bottom: 12px;
         }
         .analysis-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-primary);
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
         .analysis-text {
             font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.5;
-        }
-        .roast-text {
-            font-size: 14px;
-            color: #ea580c;
-            font-weight: 600;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed #ea580c30;
         }
 
         .loading-container {
@@ -414,15 +428,45 @@
             <h1>TACTICAL IQ TESTER</h1>
             <p class="text-secondary">Test your managerial IQ against AI scenarios</p>
         </div>
-        <div class="input-group">
-            <label>USERNAME</label>
-            <input type="text" id="input-username" value="Hamza">
+        
+        <!-- Login Form -->
+        <div id="login-form">
+            <div class="input-group">
+                <label>EMAIL / USERNAME</label>
+                <input type="text" id="login-email" placeholder="Enter your email">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+            </div>
+            <button class="btn" id="login-btn">LOGIN →</button>
+            <div class="register-link">
+                Don't have an account? <span id="show-register">Create one</span>
+            </div>
+            <div id="login-error" class="error-message"></div>
         </div>
-        <div class="input-group">
-            <label>PASSWORD (optional)</label>
-            <input type="password" id="input-password" placeholder="Leave blank to continue">
+
+        <!-- Register Form (hidden initially) -->
+        <div id="register-form" style="display: none;">
+            <div class="input-group">
+                <label>USERNAME</label>
+                <input type="text" id="register-username" placeholder="Choose a username">
+            </div>
+            <div class="input-group">
+                <label>EMAIL</label>
+                <input type="email" id="register-email" placeholder="Enter your email">
+            </div>
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <input type="password" id="register-password" placeholder="Create a password">
+            </div>
+            <button class="btn" id="register-btn">REGISTER →</button>
+            <div class="register-link">
+                Already have an account? <span id="show-login">Login</span>
+            </div>
+            <div id="register-error" class="error-message"></div>
+            <div id="register-success" class="success-message"></div>
         </div>
-        <button class="btn" id="loginBtn">ENTER THE DUGOUT →</button>
     </div>
 
     <!-- MAIN MENU SCREEN -->
@@ -436,6 +480,7 @@
             <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text-tertiary);">
                 <span>📊 XP: <span id="profile-xp">0</span>/<span id="profile-xp-max">100</span></span>
                 <span>🏆 Matches: <span id="profile-matches">0</span></span>
+                <span>⭐ High Score: <span id="profile-high">0</span></span>
             </div>
         </div>
 
@@ -457,7 +502,7 @@
             <div class="difficulty-desc">Brutal scenario • 2+ setbacks (red cards, injuries, exhausted squad)</div>
         </div>
 
-        <button class="btn btn-secondary" onclick="navigate('screen-login')" style="margin-top: 16px;">Sign Out</button>
+        <button class="btn btn-secondary" id="logout-btn" style="margin-top: 16px;">Sign Out</button>
     </div>
 
     <!-- SCENARIO SCREEN -->
@@ -475,7 +520,7 @@
 
         <div class="formation-image" id="formation-image">
             <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">Opponent Formation</div>
-            <div id="formation-diagram" class="formation-diagram">⚽ 4-3-3 Formation ⚽<br>Loading...</div>
+            <div id="formation-diagram" class="formation-diagram">⚽ Loading formation... ⚽</div>
         </div>
 
         <h3>YOUR TACTICAL CHANGES</h3>
@@ -509,6 +554,12 @@
             </div>
         </div>
 
+        <!-- ROAST BOX - Directly under rating -->
+        <div class="roast-box">
+            <span class="roast-emoji">🔥</span>
+            <span class="roast-text" id="roast-text">Loading roast...</span>
+        </div>
+
         <div class="result-banner" id="result-banner">PROCESSING</div>
 
         <div class="analysis-card">
@@ -531,10 +582,6 @@
             <div class="analysis-text" id="improvement-text"></div>
         </div>
 
-        <div class="analysis-card">
-            <div class="roast-text" id="roast-text">🔥 Loading roast...</div>
-        </div>
-
         <div class="profile-card" style="margin-top: 8px; text-align: center;">
             <div>🏆 XP EARNED: <strong id="xp-earned">0</strong></div>
             <div id="level-up-message" style="color: #f59e0b; font-size: 12px; margin-top: 4px;"></div>
@@ -547,35 +594,147 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Manager State
+    // ============ YOUR SUPABASE CREDENTIALS (INSERTED) ============
+    const SUPABASE_URL = "https://vvensobffgbdziwstmkm.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2ZW5zb2JmZmdiZHppd3N0bWttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTY5NjgsImV4cCI6MjA5NTk3Mjk2OH0.xb46TQTHbfBJ85qWruhP0c8rZUcbVAfRCIbPcxQspQI";
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // ============ MANAGER STATE ============
+    let currentUser = null;
     let manager = {
-        name: "Hamza",
+        id: null,
+        username: "",
         xp: 0,
         level: 1,
         matches: 0,
         highestRating: 0
     };
-
+    
     let currentDifficulty = "";
     let currentScenario = null;
     let currentEvaluation = null;
 
-    // Save/Load Functions
-    function saveManager() {
-        localStorage.setItem('tacticalManager', JSON.stringify(manager));
-    }
-
-    function loadManager() {
-        let saved = localStorage.getItem('tacticalManager');
-        if (saved) {
-            manager = JSON.parse(saved);
+    // ============ AUTH FUNCTIONS ============
+    async function login(email, password) {
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            
+            if (error) throw error;
+            
+            // Fetch manager profile
+            const { data: profile, error: profileError } = await supabase
+                .from('manager_profiles')
+                .select('*')
+                .eq('user_id', data.user.id)
+                .single();
+            
+            if (profileError && profileError.code !== 'PGRST116') throw profileError;
+            
+            if (profile) {
+                manager = {
+                    id: profile.user_id,
+                    username: profile.username,
+                    xp: profile.xp,
+                    level: profile.level,
+                    matches: profile.matches,
+                    highestRating: profile.highest_rating
+                };
+            } else {
+                // Create new profile
+                const { data: newProfile, error: createError } = await supabase
+                    .from('manager_profiles')
+                    .insert([{
+                        user_id: data.user.id,
+                        username: email.split('@')[0],
+                        xp: 0,
+                        level: 1,
+                        matches: 0,
+                        highest_rating: 0
+                    }])
+                    .select()
+                    .single();
+                
+                if (createError) throw createError;
+                
+                manager = {
+                    id: newProfile.user_id,
+                    username: newProfile.username,
+                    xp: newProfile.xp,
+                    level: newProfile.level,
+                    matches: newProfile.matches,
+                    highestRating: newProfile.highest_rating
+                };
+            }
+            
+            currentUser = data.user;
+            updateUI();
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
         }
-        updateUI();
     }
-
+    
+    async function register(username, email, password) {
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { username: username }
+                }
+            });
+            
+            if (error) throw error;
+            
+            // Create manager profile
+            const { error: profileError } = await supabase
+                .from('manager_profiles')
+                .insert([{
+                    user_id: data.user.id,
+                    username: username,
+                    xp: 0,
+                    level: 1,
+                    matches: 0,
+                    highest_rating: 0
+                }]);
+            
+            if (profileError) throw profileError;
+            
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+    
+    async function logout() {
+        await supabase.auth.signOut();
+        currentUser = null;
+        navigate('screen-login');
+    }
+    
+    async function saveManagerProgress() {
+        if (!currentUser) return;
+        
+        await supabase
+            .from('manager_profiles')
+            .update({
+                xp: manager.xp,
+                level: manager.level,
+                matches: manager.matches,
+                highest_rating: manager.highestRating
+            })
+            .eq('user_id', currentUser.id);
+    }
+    
+    // ============ UI FUNCTIONS ============
     function updateUI() {
-        document.getElementById('profile-name').innerHTML = manager.name;
+        document.getElementById('profile-name').innerHTML = manager.username;
         document.getElementById('profile-level').innerHTML = `Level ${manager.level}`;
         let needed = manager.level * 100;
         let percent = Math.min((manager.xp / needed) * 100, 100);
@@ -583,8 +742,9 @@
         document.getElementById('profile-xp').innerHTML = manager.xp;
         document.getElementById('profile-xp-max').innerHTML = needed;
         document.getElementById('profile-matches').innerHTML = manager.matches;
+        document.getElementById('profile-high').innerHTML = manager.highestRating;
     }
-
+    
     function addXP(amount) {
         manager.xp += amount;
         let needed = manager.level * 100;
@@ -595,33 +755,101 @@
             needed = manager.level * 100;
             leveled = true;
         }
+        
         if (leveled) {
             let msg = document.getElementById('level-up-message');
             if (msg) msg.innerHTML = `🎉 LEVEL UP! You are now Level ${manager.level}! 🎉`;
         }
-        saveManager();
+        
+        saveManagerProgress();
         updateUI();
     }
-
+    
+    function updateHighestRating(rating) {
+        if (rating > manager.highestRating) {
+            manager.highestRating = rating;
+            saveManagerProgress();
+            updateUI();
+        }
+    }
+    
     function navigate(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
     }
-
-    // Login
-    document.getElementById('loginBtn').onclick = () => {
-        let name = document.getElementById('input-username').value.trim();
-        if (name) manager.name = name;
-        loadManager();
-        navigate('screen-menu');
-    };
-
-    // Select Difficulty
+    
+    // ============ AUTH UI HANDLERS ============
+    document.getElementById('show-register')?.addEventListener('click', () => {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('register-form').style.display = 'block';
+        document.getElementById('login-error').innerHTML = '';
+        document.getElementById('register-error').innerHTML = '';
+        document.getElementById('register-success').innerHTML = '';
+    });
+    
+    document.getElementById('show-login')?.addEventListener('click', () => {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('register-form').style.display = 'none';
+        document.getElementById('login-error').innerHTML = '';
+        document.getElementById('register-error').innerHTML = '';
+        document.getElementById('register-success').innerHTML = '';
+    });
+    
+    document.getElementById('login-btn')?.addEventListener('click', async () => {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        
+        if (!email || !password) {
+            document.getElementById('login-error').innerHTML = 'Please enter email and password';
+            return;
+        }
+        
+        const result = await login(email, password);
+        if (result.success) {
+            navigate('screen-menu');
+        } else {
+            document.getElementById('login-error').innerHTML = result.error;
+        }
+    });
+    
+    document.getElementById('register-btn')?.addEventListener('click', async () => {
+        const username = document.getElementById('register-username').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
+        
+        if (!username || !email || !password) {
+            document.getElementById('register-error').innerHTML = 'Please fill all fields';
+            return;
+        }
+        
+        if (password.length < 6) {
+            document.getElementById('register-error').innerHTML = 'Password must be at least 6 characters';
+            return;
+        }
+        
+        const result = await register(username, email, password);
+        if (result.success) {
+            document.getElementById('register-success').innerHTML = 'Account created! Please login.';
+            document.getElementById('register-error').innerHTML = '';
+            // Switch to login form after 2 seconds
+            setTimeout(() => {
+                document.getElementById('show-login').click();
+            }, 2000);
+        } else {
+            document.getElementById('register-error').innerHTML = result.error;
+        }
+    });
+    
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+        logout();
+    });
+    
+    // ============ GAME FUNCTIONS ============
     async function selectDifficulty(difficulty) {
         currentDifficulty = difficulty;
         document.getElementById('difficulty-badge').innerHTML = difficulty.toUpperCase();
         navigate('screen-loading');
-
+    
         try {
             let response = await fetch('/api/generate-scenario', {
                 method: 'POST',
@@ -630,11 +858,9 @@
             });
             currentScenario = await response.json();
             
-            // Update UI with scenario
             document.getElementById('scenario-title').innerHTML = currentScenario.title;
             document.getElementById('scenario-description').innerHTML = currentScenario.description;
             
-            // Display setbacks
             let setbacksHtml = '';
             if (currentScenario.setbacks) {
                 currentScenario.setbacks.forEach(s => {
@@ -643,13 +869,11 @@
             }
             document.getElementById('setbacks-container').innerHTML = setbacksHtml;
             
-            // Display formation diagram
             let formationHtml = `<div style="text-align: center;"><strong>${currentScenario.opponentFormation}</strong></div><div style="margin-top: 12px;">`;
             if (currentScenario.formationDiagram) {
-                formationHtml += `<pre style="font-size: 11px; background: #0a0f18; padding: 12px; border-radius: 8px;">${currentScenario.formationDiagram}</pre>`;
+                formationHtml += `<pre style="font-size: 11px; background: #05070f; padding: 12px; border-radius: 8px;">${currentScenario.formationDiagram}</pre>`;
             } else {
                 formationHtml += `<div class="pitch-simple">`;
-                let rows = [[4,3,3], [4,4,2], [3,5,2], [5,4,1]];
                 let formationMap = {'4-3-3': [4,3,3], '4-4-2': [4,4,2], '3-5-2': [3,5,2], '5-4-1': [5,4,1]};
                 let nums = formationMap[currentScenario.opponentFormation] || [4,3,3];
                 for (let i = 0; i < nums.length; i++) {
@@ -672,8 +896,7 @@
             navigate('screen-menu');
         }
     }
-
-    // Submit Tactics
+    
     async function submitTactics() {
         let tactics = document.getElementById('tactics-input').value.trim();
         if (!tactics) {
@@ -697,15 +920,36 @@
             
             currentEvaluation = await response.json();
             
-            // Update results UI
+            let ratingNum = parseFloat(currentEvaluation.rating);
+            
+            // Update UI
             document.getElementById('rating-value').innerHTML = currentEvaluation.rating;
             document.getElementById('match-narrative').innerHTML = currentEvaluation.narrative;
             document.getElementById('strengths-text').innerHTML = currentEvaluation.strengths;
             document.getElementById('weaknesses-text').innerHTML = currentEvaluation.weaknesses;
-            document.getElementById('improvement-text').innerHTML = currentEvaluation.improvements || currentEvaluation.whatYouMissed;
-            document.getElementById('roast-text').innerHTML = `🔥 "${currentEvaluation.roast}"`;
+            document.getElementById('improvement-text').innerHTML = currentEvaluation.improvements;
             
-            let ratingNum = parseFloat(currentEvaluation.rating);
+            // Roast based on rating
+            let roastMessage = "";
+            let roastEmoji = "🔥";
+            if (ratingNum >= 8.5) {
+                roastMessage = "Outstanding! The board is already planning your statue outside the stadium! 🏆";
+                roastEmoji = "👑";
+            } else if (ratingNum >= 7) {
+                roastMessage = "Solid performance! The fans are singing your name tonight. 🎵";
+                roastEmoji = "👍";
+            } else if (ratingNum >= 5) {
+                roastMessage = "Average at best. The kit man could have done about the same with the laundry cart. 🧺";
+                roastEmoji = "😐";
+            } else if (ratingNum >= 3) {
+                roastMessage = "Yikes. Your tactics made my grandmother's bingo strategy look like prime Guardiola. 👵";
+                roastEmoji = "💀";
+            } else {
+                roastMessage = "ABSOLUTE DISASTER. Did you confuse the tactics board with a dart board? The tea lady is asking for your job. ☕";
+                roastEmoji = "🤡";
+            }
+            document.getElementById('roast-text').innerHTML = `${roastEmoji} ${roastMessage}`;
+            
             let outcome = currentEvaluation.outcome || (ratingNum >= 6.5 ? "WIN" : (ratingNum >= 4 ? "DRAW" : "LOSS"));
             let banner = document.getElementById('result-banner');
             if (outcome === "WIN") {
@@ -719,12 +963,13 @@
                 banner.innerHTML = "💔 DEFEAT 💔";
             }
             
-            // XP Calculation
+            // XP Calculation based on rating
             let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXP(xpGain);
+            updateHighestRating(ratingNum);
             manager.matches++;
-            saveManager();
+            saveManagerProgress();
             updateUI();
             
             navigate('screen-results');
@@ -734,17 +979,44 @@
             navigate('screen-menu');
         }
     }
-
+    
     function nextScenario() {
         selectDifficulty(currentDifficulty);
     }
-
+    
     window.selectDifficulty = selectDifficulty;
     window.submitTactics = submitTactics;
     window.nextScenario = nextScenario;
     window.navigate = navigate;
     
-    loadManager();
+    // Check if user is already logged in
+    async function checkSession() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            // User is logged in, fetch their profile
+            const { data: profile } = await supabase
+                .from('manager_profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .single();
+            
+            if (profile) {
+                manager = {
+                    id: profile.user_id,
+                    username: profile.username,
+                    xp: profile.xp,
+                    level: profile.level,
+                    matches: profile.matches,
+                    highestRating: profile.highest_rating
+                };
+                currentUser = session.user;
+                updateUI();
+                navigate('screen-menu');
+            }
+        }
+    }
+    
+    checkSession();
 </script>
 </body>
 </html>
