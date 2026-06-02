@@ -122,7 +122,6 @@
             margin-bottom: 0;
         }
 
-        /* Login Screen */
         .login-header {
             text-align: center;
             margin-bottom: 40px;
@@ -163,7 +162,6 @@
             margin-top: 12px;
         }
 
-        /* Profile Card */
         .profile-card {
             background: linear-gradient(135deg, #171f35, #121829);
             border: 1px solid var(--border-soft);
@@ -202,7 +200,6 @@
             transition: width 0.5s ease;
         }
 
-        /* Difficulty Cards */
         .difficulty-card {
             background: #171f35;
             border: 2px solid var(--border-soft);
@@ -228,7 +225,6 @@
             color: var(--text-secondary);
         }
 
-        /* Scenario Display */
         .scenario-card {
             background: #171f35;
             border: 1px solid var(--border-soft);
@@ -282,7 +278,6 @@
             border-color: var(--primary);
         }
 
-        /* Rating Display */
         .rating-container {
             display: flex;
             align-items: center;
@@ -397,7 +392,7 @@
 <body>
 
 <div class="app-container">
-    <!-- LOGIN -->
+    <!-- LOGIN SCREEN -->
     <div id="screen-login" class="screen active">
         <div class="login-header">
             <div class="login-icon">⚽</div>
@@ -426,10 +421,8 @@
                 <span>⭐ Avg Rating: <span id="profile-avg">0.0</span></span>
             </div>
         </div>
-
         <h2 style="text-align: center;">QUICK PLAY</h2>
         <p class="text-secondary" style="text-align: center; margin-bottom: 20px;">Choose your difficulty</p>
-
         <div class="difficulty-card easy" onclick="selectDifficulty('easy')">
             <div class="difficulty-title" style="color: #10b981;">EASY</div>
             <div class="difficulty-desc">Basic scenario • No major setbacks</div>
@@ -444,7 +437,7 @@
         </div>
     </div>
 
-    <!-- SCENARIO -->
+    <!-- SCENARIO SCREEN -->
     <div id="screen-scenario" class="screen">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
             <span class="level-badge" id="difficulty-badge">EASY</span>
@@ -465,7 +458,7 @@
         <button class="btn btn-secondary" onclick="navigate('screen-menu')">Cancel</button>
     </div>
 
-    <!-- LOADING -->
+    <!-- LOADING SCREEN -->
     <div id="screen-loading" class="screen">
         <div class="loading-container">
             <div class="spinner"></div>
@@ -474,7 +467,7 @@
         </div>
     </div>
 
-    <!-- RESULTS -->
+    <!-- RESULTS SCREEN (New format) -->
     <div id="screen-results" class="screen">
         <h1 style="font-size: 24px;">MATCH REVIEW</h1>
         <div class="rating-container">
@@ -483,10 +476,25 @@
         </div>
         <div class="roast-box"><span class="roast-emoji">🔥</span><span class="roast-text" id="roast-text">Loading roast...</span></div>
         <div class="result-banner" id="result-banner">PROCESSING</div>
-        <div class="analysis-card"><div class="analysis-title" style="color: #10b981;">📖 MATCH NARRATIVE</div><div class="analysis-text" id="match-narrative"></div></div>
-        <div class="analysis-card"><div class="analysis-title" style="color: #3b82f6;">✅ WHAT YOU DID RIGHT</div><div class="analysis-text" id="strengths-text"></div></div>
-        <div class="analysis-card"><div class="analysis-title" style="color: #dc2626;">❌ WHAT YOU MISSED</div><div class="analysis-text" id="weaknesses-text"></div></div>
-        <div class="analysis-card"><div class="analysis-title" style="color: #f59e0b;">💡 WHAT YOU COULD HAVE DONE DIFFERENTLY</div><div class="analysis-text" id="improvement-text"></div></div>
+
+        <!-- Tactical Board -->
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #f59e0b;">🧠 TACTICAL BOARD</div>
+            <div class="analysis-text" id="tactical-board" style="white-space: pre-line; font-family: monospace; font-size: 12px;"></div>
+        </div>
+
+        <!-- Why It Worked / Failed -->
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #3b82f6;">⚙️ WHY IT WORKED / FAILED</div>
+            <div class="analysis-text" id="why-text" style="white-space: pre-line;"></div>
+        </div>
+
+        <!-- Drama Sequence -->
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #dc2626;">⏱️ DRAMA SEQUENCE</div>
+            <div class="analysis-text" id="drama-text" style="white-space: pre-line;"></div>
+        </div>
+
         <div class="profile-card" style="margin-top: 8px; text-align: center;">
             <div>🏆 XP EARNED: <strong id="xp-earned">0</strong></div>
             <div id="level-up-message" style="color: #f59e0b; font-size: 12px; margin-top: 4px;"></div>
@@ -505,7 +513,7 @@
         xp: 0,
         level: 1,
         matches: 0,
-        totalRating: 0,      // sum of all ratings for average calculation
+        totalRating: 0,
         avgRating: 0
     };
 
@@ -544,7 +552,6 @@
         manager.xp += Math.floor(rating * 8) + 20;
         manager.totalRating += rating;
         manager.matches++;
-        // level up logic
         let needed = manager.level * 100;
         let leveled = false;
         while (manager.xp >= needed && manager.level < 50) {
@@ -648,11 +655,10 @@
             currentEvaluation = await response.json();
             let ratingNum = parseFloat(currentEvaluation.rating);
             document.getElementById('rating-value').innerHTML = currentEvaluation.rating;
-            document.getElementById('match-narrative').innerHTML = currentEvaluation.narrative;
-            document.getElementById('strengths-text').innerHTML = currentEvaluation.strengths;
-            document.getElementById('weaknesses-text').innerHTML = currentEvaluation.weaknesses;
-            document.getElementById('improvement-text').innerHTML = currentEvaluation.improvements;
-            
+            document.getElementById('tactical-board').innerHTML = currentEvaluation.tacticalBoard;
+            document.getElementById('why-text').innerHTML = currentEvaluation.whyItWorkedOrFailed;
+            document.getElementById('drama-text').innerHTML = currentEvaluation.dramaSequence;
+
             let roastMessage = "";
             let roastEmoji = "🔥";
             if (ratingNum >= 8.5) {
@@ -672,7 +678,7 @@
                 roastEmoji = "🤡";
             }
             document.getElementById('roast-text').innerHTML = `${roastEmoji} ${roastMessage}`;
-            
+
             let outcome = currentEvaluation.outcome || (ratingNum >= 6.5 ? "WIN" : (ratingNum >= 4 ? "DRAW" : "LOSS"));
             let banner = document.getElementById('result-banner');
             if (outcome === "WIN") {
@@ -685,6 +691,7 @@
                 banner.className = "result-banner lose";
                 banner.innerHTML = "💔 DEFEAT 💔";
             }
+
             let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXPAndRating(ratingNum);
