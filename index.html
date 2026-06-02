@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tactical IQ Pro - AI Manager</title>
+    <title>Tactical IQ Pro - AI Roast Master</title>
     <style>
         * {
             margin: 0;
@@ -21,9 +21,9 @@
             --primary-dark: #0d9668;
             --accent-gold: #f59e0b;
             --accent-red: #dc2626;
+            --accent-orange: #ea580c;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
-            --text-tertiary: #5b6c8f;
         }
         body {
             background: radial-gradient(ellipse at 20% 30%, #0a1020, #03050a);
@@ -46,7 +46,7 @@
         }
         .screen { display: none; flex-direction: column; flex: 1; padding: 20px 18px 24px; overflow-y: auto; }
         .screen.active { display: flex; }
-        h1 { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 12px; background: linear-gradient(135deg, #fff, #a0aec0); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        h1 { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 12px; background: linear-gradient(135deg, #fff, #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
         h2 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
         .btn {
             background: var(--primary);
@@ -86,11 +86,19 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .mode-card:active { transform: scale(0.98); border-color: #2563eb; background: #121829; }
+        .mode-card:active { transform: scale(0.98); border-color: #f59e0b; background: #121829; }
         .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 8px; }
         .badge.worldcup { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .badge.career { background: rgba(37, 99, 235, 0.15); color: #3b82f6; }
         .badge.quick { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .scenario-detail {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 3px solid #f59e0b;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 0 12px 12px 0;
+        }
+        .scenario-detail p { font-size: 12px; color: #94a3b8; margin-top: 6px; line-height: 1.45; }
         .workspace-pitch { width: 100%; height: 260px; background: #143520; border: 2px solid #234e32; border-radius: 16px; margin-bottom: 12px; position: relative; overflow: hidden; touch-action: none; }
         .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; }
         .pitch-half-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.12); }
@@ -101,7 +109,7 @@
             position: absolute;
             width: 28px;
             height: 28px;
-            background: #2563eb;
+            background: #3b82f6;
             border: 2px solid #fff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
@@ -122,8 +130,8 @@
         textarea { width: 100%; background: #171f35; border: 1px solid #222d4a; border-radius: 14px; padding: 12px; color: white; font-size: 13px; resize: none; font-family: inherit; margin-bottom: 12px; outline: none; }
         textarea:focus { border-color: #10b981; }
         .rating-container { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #171f35, #121829); border: 1px solid #222d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
-        .rating-box { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 14px; width: 70px; height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .rating-score { font-size: 28px; font-weight: 900; color: #f59e0b; }
+        .rating-box { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 14px; width: 80px; height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .rating-score { font-size: 32px; font-weight: 900; color: #f59e0b; }
         .report-card { background: #171f35; border: 1px solid #222d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
         .result-banner { text-align: center; font-size: 15px; font-weight: 800; padding: 10px; border-radius: 10px; margin-bottom: 14px; text-transform: uppercase; }
         .result-banner.win { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
@@ -131,11 +139,11 @@
         .eval-section { margin-bottom: 16px; }
         .eval-section-title { font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; margin-bottom: 6px; }
         .eval-text { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+        .roast-text { font-size: 13px; color: #ea580c; font-weight: 600; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ea580c30; }
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 0; }
         .spinner { width: 40px; height: 40px; border: 4px solid #222d4a; border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .text-secondary { color: #94a3b8; }
-        .text-tertiary { color: #5b6c8f; }
         .level-up-toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #f59e0b; border-radius: 20px; padding: 14px; text-align: center; z-index: 1000; animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -143,23 +151,21 @@
 <body>
 
 <div class="app-container">
-    <!-- SCREEN 1: LOGIN -->
     <div id="screen-login" class="screen active">
         <div style="flex:1; display: flex; flex-direction: column; justify-content: center;">
             <div style="text-align: center; margin-bottom: 30px;">
-                <div style="font-size: 52px; margin-bottom: 10px;">⚽</div>
+                <div style="font-size: 52px; margin-bottom: 10px;">🎙️</div>
                 <h1>Tactical IQ Pro</h1>
-                <p class="text-secondary" style="text-align: center;">AI-Powered Manager Simulator</p>
+                <p class="text-secondary" style="text-align: center;">AI Roast Master · Get Destroyed or Glorified</p>
             </div>
             <div style="margin-bottom: 20px;">
-                <label style="display:block; font-size:10px; color:var(--text-tertiary); margin-bottom:6px; font-weight:600;">MANAGER NAME</label>
+                <label style="display:block; font-size:10px; color:#5b6c8f; margin-bottom:6px; font-weight:600;">MANAGER NAME</label>
                 <input type="text" id="input-username" value="Hamza" style="width:100%; padding:14px; background:#0c101d; border:1px solid #222d4a; border-radius:32px; color:white; font-size:14px;">
             </div>
             <button class="btn" id="loginBtn">Start Career →</button>
         </div>
     </div>
 
-    <!-- SCREEN 2: MAIN MENU -->
     <div id="screen-modes" class="screen">
         <div class="profile-card">
             <div class="profile-header">
@@ -174,54 +180,55 @@
             </div>
         </div>
         <div class="mode-card" onclick="startScenario('World Cup')">
-            <span class="badge worldcup">★ World Cup ★</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">World Cup Knockout</div>
-            <div class="text-secondary">High pressure — use AI analysis to win!</div>
+            <span class="badge worldcup">★ WORLD CUP FINAL ★</span>
+            <div style="font-weight: 700; font-size: 15px; color:#fff;">🏆 World Cup Final vs Argentina</div>
+            <div class="text-secondary">90th minute, 1-1. Messi is dancing through your midfield. Your defenders are cramping. Make the right call or go home in shame.</div>
         </div>
         <div class="mode-card" onclick="startScenario('Manager Career')">
-            <span class="badge career">Club Career</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">Career Mode Match</div>
-            <div class="text-secondary">Lead your club through critical fixtures.</div>
+            <span class="badge career">⚔️ RELEGATION BATTLE</span>
+            <div style="font-weight: 700; font-size: 15px; color:#fff;">🏚️ Last Day Survival vs Rivals</div>
+            <div class="text-secondary">85th minute, losing 1-0. Your team looks defeated. The crowd is silent. One tactical change could save your job — or send you down.</div>
         </div>
         <div class="mode-card" onclick="startScenario('Quick Play')">
-            <span class="badge quick">Instant</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">Quick Play</div>
-            <div class="text-secondary">Random scenario — test your tactics!</div>
+            <span class="badge quick">🔥 CHAOS MODE</span>
+            <div style="font-weight: 700; font-size: 15px; color:#fff;">⚡ 2-0 Down, 10 Men, 10 Minutes Left</div>
+            <div class="text-secondary">Red card. Two goals down. The opposition is taunting your bench. The kit man is already packing. Can you salvage anything?</div>
         </div>
         <button class="btn btn-secondary" onclick="navigate('screen-login')">Sign Out</button>
     </div>
 
-    <!-- SCREEN 3: WORKSPACE -->
     <div id="screen-workspace" class="screen">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
             <span id="work-mode-badge" style="font-weight:700; color:#f59e0b;">SCENARIO</span>
-            <span style="font-weight:700; color:#10b981;">DRAG PLAYERS</span>
+            <span style="font-weight:700; color:#10b981;">DRAG YOUR PLAYERS</span>
         </div>
         <h2 id="scenario-title">Loading...</h2>
-        <div id="scenario-desc" class="text-secondary" style="margin-bottom:12px; font-size:13px;"></div>
+        <div class="scenario-detail" id="scenario-detail-box">
+            <p id="scenario-detail-text">Detailed scenario information will appear here...</p>
+        </div>
         <div class="workspace-pitch" id="live-pitch">
             <div class="pitch-half-line"></div>
             <div class="pitch-center-circle"></div>
             <div class="pitch-penalty-box top"></div>
             <div class="pitch-penalty-box bottom"></div>
         </div>
-        <textarea id="tactics-input" rows="4" placeholder="Describe your tactical plan: formation, width, pressing triggers, defensive adjustments..."></textarea>
-        <button class="btn" onclick="submitToAI()">Submit to AI Analyst →</button>
+        <textarea id="tactics-input" rows="5" placeholder="Write your tactical plan here. The more detail, the better the roast or praise.
+
+Example: 'Drop into a low block, instruct fullbacks to tuck inside, target man up top for long balls...'"></textarea>
+        <button class="btn" onclick="submitToAI()">Submit to AI Roast Master →</button>
         <button class="btn btn-secondary" onclick="navigate('screen-modes')">Cancel</button>
     </div>
 
-    <!-- SCREEN 4: LOADING -->
     <div id="screen-loading" class="screen">
         <div class="loading-container">
             <div class="spinner"></div>
-            <h2>AI is analyzing your tactics...</h2>
-            <p class="text-secondary" style="text-align: center; margin-top: 8px;">Gemini AI evaluating your strategic decisions</p>
+            <h2>Gemini AI is analyzing...</h2>
+            <p class="text-secondary" style="text-align: center; margin-top: 8px;">Preparing your tactical roast or praise</p>
         </div>
     </div>
 
-    <!-- SCREEN 5: RESULTS -->
     <div id="screen-evaluation" class="screen">
-        <h1 style="font-size: 22px;">AI Match Report</h1>
+        <h1 style="font-size: 22px;">AI Verdict</h1>
         <div class="rating-container">
             <div><h2 style="margin-bottom:2px;">Tactical Rating</h2><p class="text-secondary" style="font-size:11px;">Gemini AI Score</p></div>
             <div class="rating-box"><div class="rating-score" id="rating-value">--</div></div>
@@ -229,8 +236,9 @@
         <div class="result-banner" id="outcome-banner">PROCESSING</div>
         <div class="report-card">
             <div class="eval-section"><div class="eval-section-title" style="color:#10b981;">📖 Match Analysis</div><div class="eval-text" id="eval-narrative"></div></div>
-            <div class="eval-section"><div class="eval-section-title" style="color:#3b82f6;">✅ Strengths</div><div class="eval-text" id="eval-strengths"></div></div>
-            <div class="eval-section"><div class="eval-section-title" style="color:#dc2626;">⚠️ Weaknesses</div><div class="eval-text" id="eval-critiques"></div></div>
+            <div class="eval-section"><div class="eval-section-title" style="color:#3b82f6;">✅ What Worked</div><div class="eval-text" id="eval-strengths"></div></div>
+            <div class="eval-section"><div class="eval-section-title" style="color:#dc2626;">⚠️ What Failed</div><div class="eval-text" id="eval-critiques"></div></div>
+            <div class="roast-text" id="roast-text">🔥 Roast loading...</div>
         </div>
         <div class="profile-card" style="margin-bottom:12px; text-align:center;">
             <div>🏆 XP Earned: <strong id="xp-earned">0</strong></div>
@@ -243,14 +251,9 @@
 <script>
     let manager = { name: "Hamza", xp: 0, level: 1, matches: 0 };
     let currentMode = "";
-    let currentEvaluation = null;
 
     function saveManager() { localStorage.setItem('tacticalManager', JSON.stringify(manager)); }
-    function loadManager() {
-        let saved = localStorage.getItem('tacticalManager');
-        if (saved) { manager = JSON.parse(saved); }
-        updateUI();
-    }
+    function loadManager() { let saved = localStorage.getItem('tacticalManager'); if (saved) { manager = JSON.parse(saved); } updateUI(); }
     function updateUI() {
         document.getElementById('profile-name').innerHTML = manager.name;
         document.getElementById('profile-level').innerHTML = `Level ${manager.level}`;
@@ -260,7 +263,7 @@
         document.getElementById('profile-xp').innerHTML = manager.xp;
         document.getElementById('profile-xp-max').innerHTML = needed;
         document.getElementById('profile-matches').innerHTML = manager.matches;
-        let titles = ["Sunday League", "Youth Coach", "Semi-Pro", "Pro License", "Tactical Analyst", "Master Tactician", "Elite Strategist", "Legendary"];
+        let titles = ["Sunday League Coach", "Youth Academy Coach", "Semi-Pro Manager", "Pro License Holder", "Tactical Analyst", "Master Tactician", "Elite Strategist", "Legendary Gaffer"];
         let idx = Math.min(Math.floor((manager.level-1)/2), titles.length-1);
         document.getElementById('profile-title').innerHTML = titles[idx];
     }
@@ -286,14 +289,8 @@
     }
 
     function navigate(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    document.getElementById('loginBtn').onclick = () => {
-        let val = document.getElementById('input-username').value.trim();
-        if (val) manager.name = val;
-        loadManager();
-        navigate('screen-modes');
-    };
+    document.getElementById('loginBtn').onclick = () => { let val = document.getElementById('input-username').value.trim(); if (val) manager.name = val; loadManager(); navigate('screen-modes'); };
 
-    // Pitch drag setup
     const players = [
         { id: 'GK', x: 50, y: 92, gk: true }, { id: 'CB', x: 35, y: 78 }, { id: 'CB', x: 65, y: 78 },
         { id: 'LB', x: 15, y: 64 }, { id: 'RB', x: 85, y: 64 }, { id: 'CM', x: 50, y: 48 },
@@ -319,16 +316,27 @@
         });
     }
 
+    const scenarioDetails = {
+        'World Cup': {
+            title: "🏆 World Cup Final vs Argentina",
+            detail: "📍 90th minute | Score: 1-1 | Your left back is on a yellow | Messi has completed 8 dribbles past your midfield | Your center backs are both cramping | The stadium is deafening | Extra time is looming | The world is watching"
+        },
+        'Manager Career': {
+            title: "⚔️ Relegation Decider vs Rivals",
+            detail: "📍 85th minute | Score: 0-1 | Your striker hasn't had a shot on target | The opposition fans are singing 'You're going down' | Your captain is arguing with the referee | The owner is watching from the stands | Your job hangs by a thread"
+        },
+        'Quick Play': {
+            title: "🔥 Chaos Mode: 2-0 Down, 10 Men",
+            detail: "📍 80th minute | Score: 0-2 | Red card to your best defender | Opposition striker is taunting your bench | Three players are on yellow cards | The kit man is already packing the bags | Your substitution window is closed | Pure chaos"
+        }
+    };
+
     function startScenario(mode) {
         currentMode = mode;
+        let details = scenarioDetails[mode];
         document.getElementById('work-mode-badge').innerHTML = mode.toUpperCase();
-        let scenarios = {
-            'World Cup': { title: "World Cup Quarter-Final vs Brazil", desc: "85th minute, tied 1-1. Brazil is throwing everything forward. Your defensive line is exhausted. Make the right tactical call." },
-            'Manager Career': { title: "Relegation Six-Pointer vs Rivals", desc: "75th minute, down 1-0 away from home. Your midfield is being overrun. Need a tactical shift." },
-            'Quick Play': { title: "Random High-Pressure Scenario", desc: "Late game situation. The opposition is using a high press. Adjust your structure." }
-        };
-        document.getElementById('scenario-title').innerHTML = scenarios[mode].title;
-        document.getElementById('scenario-desc').innerHTML = scenarios[mode].desc;
+        document.getElementById('scenario-title').innerHTML = details.title;
+        document.getElementById('scenario-detail-text').innerHTML = details.detail;
         document.getElementById('tactics-input').value = '';
         renderPitch();
         navigate('screen-workspace');
@@ -336,7 +344,7 @@
 
     async function submitToAI() {
         let tactics = document.getElementById('tactics-input').value.trim();
-        if (!tactics) { alert("Please describe your tactical plan!"); return; }
+        if (!tactics) { alert("Write your tactical plan first! The AI needs something to roast."); return; }
         navigate('screen-loading');
         try {
             let response = await fetch('/api/analyze', {
@@ -345,14 +353,14 @@
                 body: JSON.stringify({ scenario: currentMode, tactics: tactics, managerLevel: manager.level })
             });
             let data = await response.json();
-            currentEvaluation = data;
             document.getElementById('rating-value').innerHTML = data.rating;
             document.getElementById('eval-narrative').innerHTML = data.narrative;
             document.getElementById('eval-strengths').innerHTML = data.strengths;
             document.getElementById('eval-critiques').innerHTML = data.weaknesses;
+            document.getElementById('roast-text').innerHTML = `🔥 "${data.roast}"`;
             let isWin = parseFloat(data.rating) >= 6.5;
             document.getElementById('outcome-banner').className = `result-banner ${isWin ? 'win' : 'lose'}`;
-            document.getElementById('outcome-banner').innerHTML = isWin ? "✓ TACTICAL BREAKTHROUGH" : "✗ TACTICAL BREAKDOWN";
+            document.getElementById('outcome-banner').innerHTML = isWin ? "✓ TACTICAL BREAKTHROUGH - THE CROWD ROARS" : "✗ TACTICAL DISASTER - THE KIT MAN IS DISAPPOINTED";
             let xpGain = Math.floor(parseFloat(data.rating) * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXP(xpGain);
@@ -360,7 +368,7 @@
             saveManager();
             updateUI();
             navigate('screen-evaluation');
-        } catch(e) { alert("AI service error. Check Vercel deployment."); navigate('screen-modes'); }
+        } catch(e) { alert("AI service error. Check your Vercel environment variables."); navigate('screen-modes'); }
     }
     window.startScenario = startScenario;
     window.submitToAI = submitToAI;
