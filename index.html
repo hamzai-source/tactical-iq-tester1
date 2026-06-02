@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tactical IQ Pro - AI Roast Master</title>
+    <title>Tactical IQ Tester</title>
     <style>
         * {
             margin: 0;
@@ -11,6 +11,7 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+
         :root {
             --bg-deep: #05070f;
             --bg-surface: #0c101d;
@@ -21,40 +22,85 @@
             --primary-dark: #0d9668;
             --accent-gold: #f59e0b;
             --accent-red: #dc2626;
-            --accent-orange: #ea580c;
+            --accent-blue: #3b82f6;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
+            --text-tertiary: #5b6c8f;
         }
+
         body {
             background: radial-gradient(ellipse at 20% 30%, #0a1020, #03050a);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 16px;
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
         }
+
         .app-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 100%;
             background: var(--bg-deep);
             border-radius: 32px;
             overflow: hidden;
             border: 1px solid var(--border-soft);
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            min-height: 80vh;
+            min-height: 90vh;
         }
-        .screen { display: none; flex-direction: column; flex: 1; padding: 20px 18px 24px; overflow-y: auto; }
-        .screen.active { display: flex; }
-        h1 { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 12px; background: linear-gradient(135deg, #fff, #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
-        h2 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            padding: 24px 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff, #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
         .btn {
             background: var(--primary);
             color: white;
             border: none;
             padding: 14px;
             border-radius: 44px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
@@ -62,8 +108,55 @@
             transition: all 0.2s ease;
             margin-bottom: 10px;
         }
-        .btn:active { transform: scale(0.97); background: var(--primary-dark); }
-        .btn-secondary { background: var(--bg-elevated); border: 1px solid var(--border-soft); color: var(--text-secondary); margin-bottom: 0; }
+
+        .btn:active {
+            transform: scale(0.97);
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-soft);
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Login Screen */
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .login-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-soft);
+            border-radius: 32px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Profile Card */
         .profile-card {
             background: linear-gradient(135deg, #171f35, #121829);
             border: 1px solid var(--border-soft);
@@ -71,202 +164,427 @@
             padding: 16px;
             margin-bottom: 20px;
         }
-        .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
-        .level-badge { background: rgba(16, 185, 129, 0.12); border: 1px solid var(--primary); color: var(--primary); font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
-        .title-text { font-size: 13px; color: var(--accent-gold); font-weight: 600; }
-        .xp-bar { background: #0a0f18; height: 8px; border-radius: 10px; overflow: hidden; margin: 12px 0 6px; }
-        .xp-fill { background: linear-gradient(90deg, var(--primary), #34d399); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 10px; }
-        .stat-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text-tertiary); }
-        .mode-card {
-            background: #171f35;
-            border: 1px solid var(--border-soft);
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .level-badge {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-size: 12px;
+            padding: 4px 12px;
             border-radius: 20px;
-            padding: 16px;
+            font-weight: 700;
+        }
+        .xp-bar {
+            background: #0a0f18;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 12px 0 6px;
+        }
+        .xp-fill {
+            background: linear-gradient(90deg, var(--primary), #34d399);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Difficulty Cards */
+        .difficulty-card {
+            background: #171f35;
+            border: 2px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 18px;
             margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .mode-card:active { transform: scale(0.98); border-color: #f59e0b; background: #121829; }
-        .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-bottom: 8px; }
-        .badge.worldcup { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .badge.career { background: rgba(37, 99, 235, 0.15); color: #3b82f6; }
-        .badge.quick { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        .scenario-detail {
-            background: rgba(245, 158, 11, 0.05);
-            border-left: 3px solid #f59e0b;
-            padding: 12px;
-            margin-bottom: 16px;
-            border-radius: 0 12px 12px 0;
+        .difficulty-card:active {
+            transform: scale(0.98);
         }
-        .scenario-detail p { font-size: 12px; color: #94a3b8; margin-top: 6px; line-height: 1.45; }
-        .workspace-pitch { width: 100%; height: 260px; background: #143520; border: 2px solid #234e32; border-radius: 16px; margin-bottom: 12px; position: relative; overflow: hidden; touch-action: none; }
-        .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; }
-        .pitch-half-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.12); }
-        .pitch-penalty-box { position: absolute; left: 50%; transform: translateX(-50%); width: 140px; height: 50px; border: 1px solid rgba(255,255,255,0.12); }
-        .pitch-penalty-box.top { top: 0; border-top: none; }
-        .pitch-penalty-box.bottom { bottom: 0; border-bottom: none; }
-        .pitch-player {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            background: #3b82f6;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            cursor: grab;
+        .difficulty-card.easy { border-left: 4px solid #10b981; }
+        .difficulty-card.medium { border-left: 4px solid #f59e0b; }
+        .difficulty-card.hard { border-left: 4px solid #dc2626; }
+        .difficulty-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .difficulty-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Scenario Display */
+        .scenario-card {
+            background: #171f35;
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .setback-badge {
+            display: inline-block;
+            background: rgba(220, 38, 38, 0.15);
+            color: #dc2626;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .formation-image {
+            background: #143520;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .formation-diagram {
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre;
+            color: var(--text-secondary);
+            background: #0a0f18;
+            padding: 16px;
+            border-radius: 12px;
+            width: 100%;
+            overflow-x: auto;
+        }
+        .pitch-simple {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        .pitch-row {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 9px;
-            font-weight: 800;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            user-select: none;
-            z-index: 10;
-            touch-action: none;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-        .pitch-player:active { cursor: grabbing; border-color: #f59e0b; }
-        .pitch-player.gk { background: #f59e0b; color: #000; }
-        textarea { width: 100%; background: #171f35; border: 1px solid #222d4a; border-radius: 14px; padding: 12px; color: white; font-size: 13px; resize: none; font-family: inherit; margin-bottom: 12px; outline: none; }
-        textarea:focus { border-color: #10b981; }
-        .rating-container { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #171f35, #121829); border: 1px solid #222d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
-        .rating-box { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 14px; width: 80px; height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .rating-score { font-size: 32px; font-weight: 900; color: #f59e0b; }
-        .report-card { background: #171f35; border: 1px solid #222d4a; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
-        .result-banner { text-align: center; font-size: 15px; font-weight: 800; padding: 10px; border-radius: 10px; margin-bottom: 14px; text-transform: uppercase; }
+        .pitch-player-icon {
+            width: 40px;
+            height: 40px;
+            background: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 14px;
+            color: white;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* Rating Display */
+        .rating-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #171f35, #121829);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .rating-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 3px solid #f59e0b;
+            border-radius: 16px;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .rating-score {
+            font-size: 36px;
+            font-weight: 900;
+            color: #f59e0b;
+        }
+        .result-banner {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
         .result-banner.win { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
         .result-banner.lose { background: rgba(220, 38, 38, 0.15); color: #dc2626; border: 1px solid #dc2626; }
-        .eval-section { margin-bottom: 16px; }
-        .eval-section-title { font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; margin-bottom: 6px; }
-        .eval-text { font-size: 12px; color: #94a3b8; line-height: 1.5; }
-        .roast-text { font-size: 13px; color: #ea580c; font-weight: 600; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ea580c30; }
-        .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 0; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #222d4a; border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        .result-banner.draw { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+
+        .analysis-card {
+            background: #171f35;
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .analysis-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .analysis-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .roast-text {
+            font-size: 14px;
+            color: #ea580c;
+            font-weight: 600;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #ea580c30;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 60px 0;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-soft);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .text-secondary { color: #94a3b8; }
-        .level-up-toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #f59e0b; border-radius: 20px; padding: 14px; text-align: center; z-index: 1000; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .action-buttons .btn {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .text-secondary { color: var(--text-secondary); }
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 16px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
+    <!-- LOGIN SCREEN -->
     <div id="screen-login" class="screen active">
-        <div style="flex:1; display: flex; flex-direction: column; justify-content: center;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <div style="font-size: 52px; margin-bottom: 10px;">🎙️</div>
-                <h1>Tactical IQ Pro</h1>
-                <p class="text-secondary" style="text-align: center;">AI Roast Master · Get Destroyed or Glorified</p>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <label style="display:block; font-size:10px; color:#5b6c8f; margin-bottom:6px; font-weight:600;">MANAGER NAME</label>
-                <input type="text" id="input-username" value="Hamza" style="width:100%; padding:14px; background:#0c101d; border:1px solid #222d4a; border-radius:32px; color:white; font-size:14px;">
-            </div>
-            <button class="btn" id="loginBtn">Start Career →</button>
+        <div class="login-header">
+            <div class="login-icon">⚽</div>
+            <h1>TACTICAL IQ TESTER</h1>
+            <p class="text-secondary">Test your managerial IQ against AI scenarios</p>
         </div>
+        <div class="input-group">
+            <label>USERNAME</label>
+            <input type="text" id="input-username" value="Hamza">
+        </div>
+        <div class="input-group">
+            <label>PASSWORD (optional)</label>
+            <input type="password" id="input-password" placeholder="Leave blank to continue">
+        </div>
+        <button class="btn" id="loginBtn">ENTER THE DUGOUT →</button>
     </div>
 
-    <div id="screen-modes" class="screen">
+    <!-- MAIN MENU SCREEN -->
+    <div id="screen-menu" class="screen">
         <div class="profile-card">
             <div class="profile-header">
-                <span id="profile-name" style="font-weight: 700; color: white;">Manager</span>
+                <span id="profile-name" style="font-weight: 700;">Manager</span>
                 <span class="level-badge" id="profile-level">Level 1</span>
             </div>
-            <div class="title-text" id="profile-title">Sunday League Coach</div>
             <div class="xp-bar"><div class="xp-fill" id="xp-bar-fill"></div></div>
-            <div class="stat-row">
-                <span>📊 XP: <span id="profile-xp">0</span> / <span id="profile-xp-max">100</span></span>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text-tertiary);">
+                <span>📊 XP: <span id="profile-xp">0</span>/<span id="profile-xp-max">100</span></span>
                 <span>🏆 Matches: <span id="profile-matches">0</span></span>
             </div>
         </div>
-        <div class="mode-card" onclick="startScenario('World Cup')">
-            <span class="badge worldcup">★ WORLD CUP FINAL ★</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">🏆 World Cup Final vs Argentina</div>
-            <div class="text-secondary">90th minute, 1-1. Messi is dancing through your midfield. Your defenders are cramping. Make the right call or go home in shame.</div>
+
+        <h2 style="text-align: center;">QUICK PLAY</h2>
+        <p class="text-secondary" style="text-align: center; margin-bottom: 20px;">Choose your difficulty</p>
+
+        <div class="difficulty-card easy" onclick="selectDifficulty('easy')">
+            <div class="difficulty-title" style="color: #10b981;">EASY</div>
+            <div class="difficulty-desc">Basic scenario • No major setbacks • Perfect for learning</div>
         </div>
-        <div class="mode-card" onclick="startScenario('Manager Career')">
-            <span class="badge career">⚔️ RELEGATION BATTLE</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">🏚️ Last Day Survival vs Rivals</div>
-            <div class="text-secondary">85th minute, losing 1-0. Your team looks defeated. The crowd is silent. One tactical change could save your job — or send you down.</div>
+
+        <div class="difficulty-card medium" onclick="selectDifficulty('medium')">
+            <div class="difficulty-title" style="color: #f59e0b;">MEDIUM</div>
+            <div class="difficulty-desc">Detailed scenario • 1 setback (tired players, yellow cards)</div>
         </div>
-        <div class="mode-card" onclick="startScenario('Quick Play')">
-            <span class="badge quick">🔥 CHAOS MODE</span>
-            <div style="font-weight: 700; font-size: 15px; color:#fff;">⚡ 2-0 Down, 10 Men, 10 Minutes Left</div>
-            <div class="text-secondary">Red card. Two goals down. The opposition is taunting your bench. The kit man is already packing. Can you salvage anything?</div>
+
+        <div class="difficulty-card hard" onclick="selectDifficulty('hard')">
+            <div class="difficulty-title" style="color: #dc2626;">HARD</div>
+            <div class="difficulty-desc">Brutal scenario • 2+ setbacks (red cards, injuries, exhausted squad)</div>
         </div>
-        <button class="btn btn-secondary" onclick="navigate('screen-login')">Sign Out</button>
+
+        <button class="btn btn-secondary" onclick="navigate('screen-login')" style="margin-top: 16px;">Sign Out</button>
     </div>
 
-    <div id="screen-workspace" class="screen">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-            <span id="work-mode-badge" style="font-weight:700; color:#f59e0b;">SCENARIO</span>
-            <span style="font-weight:700; color:#10b981;">DRAG YOUR PLAYERS</span>
+    <!-- SCENARIO SCREEN -->
+    <div id="screen-scenario" class="screen">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="level-badge" id="difficulty-badge">EASY</span>
+            <span class="level-badge" style="border-color: var(--accent-blue);">OPPONENT FORMATION</span>
         </div>
-        <h2 id="scenario-title">Loading...</h2>
-        <div class="scenario-detail" id="scenario-detail-box">
-            <p id="scenario-detail-text">Detailed scenario information will appear here...</p>
+        
+        <div class="scenario-card">
+            <h2 id="scenario-title">Loading scenario...</h2>
+            <div id="setbacks-container" style="margin: 8px 0;"></div>
+            <p id="scenario-description" class="text-secondary" style="font-size: 13px; line-height: 1.5;"></p>
         </div>
-        <div class="workspace-pitch" id="live-pitch">
-            <div class="pitch-half-line"></div>
-            <div class="pitch-center-circle"></div>
-            <div class="pitch-penalty-box top"></div>
-            <div class="pitch-penalty-box bottom"></div>
-        </div>
-        <textarea id="tactics-input" rows="5" placeholder="Write your tactical plan here. The more detail, the better the roast or praise.
 
-Example: 'Drop into a low block, instruct fullbacks to tuck inside, target man up top for long balls...'"></textarea>
-        <button class="btn" onclick="submitToAI()">Submit to AI Roast Master →</button>
-        <button class="btn btn-secondary" onclick="navigate('screen-modes')">Cancel</button>
+        <div class="formation-image" id="formation-image">
+            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">Opponent Formation</div>
+            <div id="formation-diagram" class="formation-diagram">⚽ 4-3-3 Formation ⚽<br>Loading...</div>
+        </div>
+
+        <h3>YOUR TACTICAL CHANGES</h3>
+        <textarea id="tactics-input" rows="5" placeholder="Example: 'Drop into a low block, instruct fullbacks to tuck inside, target man up top for long balls, switch to 5-4-1...'"></textarea>
+        
+        <button class="btn" onclick="submitTactics()">SUBMIT TO AI REVIEWER →</button>
+        <button class="btn btn-secondary" onclick="navigate('screen-menu')">Cancel</button>
     </div>
 
+    <!-- LOADING SCREEN -->
     <div id="screen-loading" class="screen">
         <div class="loading-container">
             <div class="spinner"></div>
-            <h2>Gemini AI is analyzing...</h2>
-            <p class="text-secondary" style="text-align: center; margin-top: 8px;">Preparing your tactical roast or praise</p>
+            <h2>AI is analyzing your tactics...</h2>
+            <p class="text-secondary" style="text-align: center;">Gemini AI reviewing your managerial decisions</p>
         </div>
     </div>
 
-    <div id="screen-evaluation" class="screen">
-        <h1 style="font-size: 22px;">AI Verdict</h1>
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results" class="screen">
+        <h1 style="font-size: 24px;">MATCH REVIEW</h1>
+        
         <div class="rating-container">
-            <div><h2 style="margin-bottom:2px;">Tactical Rating</h2><p class="text-secondary" style="font-size:11px;">Gemini AI Score</p></div>
-            <div class="rating-box"><div class="rating-score" id="rating-value">--</div></div>
+            <div>
+                <h2 style="margin-bottom: 4px;">Tactical Rating</h2>
+                <p class="text-secondary" style="font-size: 11px;">AI Performance Score</p>
+            </div>
+            <div class="rating-box">
+                <div class="rating-score" id="rating-value">--</div>
+                <div style="font-size: 10px;">/ 10</div>
+            </div>
         </div>
-        <div class="result-banner" id="outcome-banner">PROCESSING</div>
-        <div class="report-card">
-            <div class="eval-section"><div class="eval-section-title" style="color:#10b981;">📖 Match Analysis</div><div class="eval-text" id="eval-narrative"></div></div>
-            <div class="eval-section"><div class="eval-section-title" style="color:#3b82f6;">✅ What Worked</div><div class="eval-text" id="eval-strengths"></div></div>
-            <div class="eval-section"><div class="eval-section-title" style="color:#dc2626;">⚠️ What Failed</div><div class="eval-text" id="eval-critiques"></div></div>
-            <div class="roast-text" id="roast-text">🔥 Roast loading...</div>
+
+        <div class="result-banner" id="result-banner">PROCESSING</div>
+
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #10b981;">📖 MATCH NARRATIVE</div>
+            <div class="analysis-text" id="match-narrative"></div>
         </div>
-        <div class="profile-card" style="margin-bottom:12px; text-align:center;">
-            <div>🏆 XP Earned: <strong id="xp-earned">0</strong></div>
-            <div id="level-up-message" style="color:#f59e0b; font-size:12px; margin-top:4px;"></div>
+
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #3b82f6;">✅ WHAT YOU DID RIGHT</div>
+            <div class="analysis-text" id="strengths-text"></div>
         </div>
-        <button class="btn" onclick="navigate('screen-modes')">Main Menu</button>
+
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #dc2626;">❌ WHAT YOU MISSED</div>
+            <div class="analysis-text" id="weaknesses-text"></div>
+        </div>
+
+        <div class="analysis-card">
+            <div class="analysis-title" style="color: #f59e0b;">💡 WHAT YOU COULD HAVE DONE DIFFERENTLY</div>
+            <div class="analysis-text" id="improvement-text"></div>
+        </div>
+
+        <div class="analysis-card">
+            <div class="roast-text" id="roast-text">🔥 Loading roast...</div>
+        </div>
+
+        <div class="profile-card" style="margin-top: 8px; text-align: center;">
+            <div>🏆 XP EARNED: <strong id="xp-earned">0</strong></div>
+            <div id="level-up-message" style="color: #f59e0b; font-size: 12px; margin-top: 4px;"></div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn" onclick="nextScenario()">NEXT SCENARIO →</button>
+            <button class="btn btn-secondary" onclick="navigate('screen-menu')">MAIN MENU</button>
+        </div>
     </div>
 </div>
 
 <script>
-    let manager = { name: "Hamza", xp: 0, level: 1, matches: 0 };
-    let currentMode = "";
+    // Manager State
+    let manager = {
+        name: "Hamza",
+        xp: 0,
+        level: 1,
+        matches: 0,
+        highestRating: 0
+    };
 
-    function saveManager() { localStorage.setItem('tacticalManager', JSON.stringify(manager)); }
-    function loadManager() { let saved = localStorage.getItem('tacticalManager'); if (saved) { manager = JSON.parse(saved); } updateUI(); }
+    let currentDifficulty = "";
+    let currentScenario = null;
+    let currentEvaluation = null;
+
+    // Save/Load Functions
+    function saveManager() {
+        localStorage.setItem('tacticalManager', JSON.stringify(manager));
+    }
+
+    function loadManager() {
+        let saved = localStorage.getItem('tacticalManager');
+        if (saved) {
+            manager = JSON.parse(saved);
+        }
+        updateUI();
+    }
+
     function updateUI() {
         document.getElementById('profile-name').innerHTML = manager.name;
         document.getElementById('profile-level').innerHTML = `Level ${manager.level}`;
         let needed = manager.level * 100;
-        let percent = (manager.xp / needed) * 100;
+        let percent = Math.min((manager.xp / needed) * 100, 100);
         document.getElementById('xp-bar-fill').style.width = `${percent}%`;
         document.getElementById('profile-xp').innerHTML = manager.xp;
         document.getElementById('profile-xp-max').innerHTML = needed;
         document.getElementById('profile-matches').innerHTML = manager.matches;
-        let titles = ["Sunday League Coach", "Youth Academy Coach", "Semi-Pro Manager", "Pro License Holder", "Tactical Analyst", "Master Tactician", "Elite Strategist", "Legendary Gaffer"];
-        let idx = Math.min(Math.floor((manager.level-1)/2), titles.length-1);
-        document.getElementById('profile-title').innerHTML = titles[idx];
     }
+
     function addXP(amount) {
         manager.xp += amount;
         let needed = manager.level * 100;
@@ -278,103 +596,155 @@ Example: 'Drop into a low block, instruct fullbacks to tuck inside, target man u
             leveled = true;
         }
         if (leveled) {
-            let toast = document.createElement('div');
-            toast.className = 'level-up-toast';
-            toast.innerHTML = `<h3 style="color:#f59e0b;">🎉 LEVEL UP! 🎉</h3><div>You are now Level ${manager.level}</div>`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
+            let msg = document.getElementById('level-up-message');
+            if (msg) msg.innerHTML = `🎉 LEVEL UP! You are now Level ${manager.level}! 🎉`;
         }
         saveManager();
         updateUI();
     }
 
-    function navigate(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    document.getElementById('loginBtn').onclick = () => { let val = document.getElementById('input-username').value.trim(); if (val) manager.name = val; loadManager(); navigate('screen-modes'); };
-
-    const players = [
-        { id: 'GK', x: 50, y: 92, gk: true }, { id: 'CB', x: 35, y: 78 }, { id: 'CB', x: 65, y: 78 },
-        { id: 'LB', x: 15, y: 64 }, { id: 'RB', x: 85, y: 64 }, { id: 'CM', x: 50, y: 48 },
-        { id: 'LW', x: 15, y: 24 }, { id: 'RW', x: 85, y: 24 }, { id: 'ST', x: 50, y: 16 }
-    ];
-    function renderPitch() {
-        let pitch = document.getElementById('live-pitch');
-        document.querySelectorAll('.pitch-player').forEach(p => p.remove());
-        players.forEach(p => {
-            let el = document.createElement('div');
-            el.className = `pitch-player ${p.gk ? 'gk' : ''}`;
-            el.innerText = p.id;
-            el.style.left = `${p.x}%`;
-            el.style.top = `${p.y}%`;
-            let drag = false, startX, startY, left, top;
-            el.addEventListener('mousedown', (e) => { drag = true; startX = e.clientX; startY = e.clientY; left = parseFloat(el.style.left); top = parseFloat(el.style.top); e.preventDefault(); });
-            window.addEventListener('mousemove', (e) => { if(drag){ let dx = e.clientX - startX, dy = e.clientY - startY; let nx = Math.min(96, Math.max(4, left + (dx/pitch.offsetWidth)*100)); let ny = Math.min(96, Math.max(4, top + (dy/pitch.offsetHeight)*100)); el.style.left = `${nx}%`; el.style.top = `${ny}%`; } });
-            window.addEventListener('mouseup', () => drag = false);
-            el.addEventListener('touchstart', (e) => { drag = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY; left = parseFloat(el.style.left); top = parseFloat(el.style.top); e.preventDefault(); });
-            window.addEventListener('touchmove', (e) => { if(drag){ let dx = e.touches[0].clientX - startX, dy = e.touches[0].clientY - startY; let nx = Math.min(96, Math.max(4, left + (dx/pitch.offsetWidth)*100)); let ny = Math.min(96, Math.max(4, top + (dy/pitch.offsetHeight)*100)); el.style.left = `${nx}%`; el.style.top = `${ny}%`; } });
-            window.addEventListener('touchend', () => drag = false);
-            pitch.appendChild(el);
-        });
+    function navigate(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
     }
 
-    const scenarioDetails = {
-        'World Cup': {
-            title: "🏆 World Cup Final vs Argentina",
-            detail: "📍 90th minute | Score: 1-1 | Your left back is on a yellow | Messi has completed 8 dribbles past your midfield | Your center backs are both cramping | The stadium is deafening | Extra time is looming | The world is watching"
-        },
-        'Manager Career': {
-            title: "⚔️ Relegation Decider vs Rivals",
-            detail: "📍 85th minute | Score: 0-1 | Your striker hasn't had a shot on target | The opposition fans are singing 'You're going down' | Your captain is arguing with the referee | The owner is watching from the stands | Your job hangs by a thread"
-        },
-        'Quick Play': {
-            title: "🔥 Chaos Mode: 2-0 Down, 10 Men",
-            detail: "📍 80th minute | Score: 0-2 | Red card to your best defender | Opposition striker is taunting your bench | Three players are on yellow cards | The kit man is already packing the bags | Your substitution window is closed | Pure chaos"
-        }
+    // Login
+    document.getElementById('loginBtn').onclick = () => {
+        let name = document.getElementById('input-username').value.trim();
+        if (name) manager.name = name;
+        loadManager();
+        navigate('screen-menu');
     };
 
-    function startScenario(mode) {
-        currentMode = mode;
-        let details = scenarioDetails[mode];
-        document.getElementById('work-mode-badge').innerHTML = mode.toUpperCase();
-        document.getElementById('scenario-title').innerHTML = details.title;
-        document.getElementById('scenario-detail-text').innerHTML = details.detail;
-        document.getElementById('tactics-input').value = '';
-        renderPitch();
-        navigate('screen-workspace');
+    // Select Difficulty
+    async function selectDifficulty(difficulty) {
+        currentDifficulty = difficulty;
+        document.getElementById('difficulty-badge').innerHTML = difficulty.toUpperCase();
+        navigate('screen-loading');
+
+        try {
+            let response = await fetch('/api/generate-scenario', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ difficulty: difficulty })
+            });
+            currentScenario = await response.json();
+            
+            // Update UI with scenario
+            document.getElementById('scenario-title').innerHTML = currentScenario.title;
+            document.getElementById('scenario-description').innerHTML = currentScenario.description;
+            
+            // Display setbacks
+            let setbacksHtml = '';
+            if (currentScenario.setbacks) {
+                currentScenario.setbacks.forEach(s => {
+                    setbacksHtml += `<span class="setback-badge">⚠️ ${s}</span>`;
+                });
+            }
+            document.getElementById('setbacks-container').innerHTML = setbacksHtml;
+            
+            // Display formation diagram
+            let formationHtml = `<div style="text-align: center;"><strong>${currentScenario.opponentFormation}</strong></div><div style="margin-top: 12px;">`;
+            if (currentScenario.formationDiagram) {
+                formationHtml += `<pre style="font-size: 11px; background: #0a0f18; padding: 12px; border-radius: 8px;">${currentScenario.formationDiagram}</pre>`;
+            } else {
+                formationHtml += `<div class="pitch-simple">`;
+                let rows = [[4,3,3], [4,4,2], [3,5,2], [5,4,1]];
+                let formationMap = {'4-3-3': [4,3,3], '4-4-2': [4,4,2], '3-5-2': [3,5,2], '5-4-1': [5,4,1]};
+                let nums = formationMap[currentScenario.opponentFormation] || [4,3,3];
+                for (let i = 0; i < nums.length; i++) {
+                    formationHtml += `<div class="pitch-row">`;
+                    for (let j = 0; j < nums[i]; j++) {
+                        formationHtml += `<div class="pitch-player-icon" style="background: #dc2626;">⚽</div>`;
+                    }
+                    formationHtml += `</div>`;
+                }
+                formationHtml += `</div>`;
+            }
+            formationHtml += `</div>`;
+            document.getElementById('formation-diagram').innerHTML = formationHtml;
+            
+            document.getElementById('tactics-input').value = '';
+            navigate('screen-scenario');
+        } catch (e) {
+            console.error(e);
+            alert("Error loading scenario. Please try again.");
+            navigate('screen-menu');
+        }
     }
 
-    async function submitToAI() {
+    // Submit Tactics
+    async function submitTactics() {
         let tactics = document.getElementById('tactics-input').value.trim();
-        if (!tactics) { alert("Write your tactical plan first! The AI needs something to roast."); return; }
+        if (!tactics) {
+            alert("Please describe your tactical changes!");
+            return;
+        }
+        
         navigate('screen-loading');
+        
         try {
             let response = await fetch('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ scenario: currentMode, tactics: tactics, managerLevel: manager.level })
+                body: JSON.stringify({
+                    difficulty: currentDifficulty,
+                    scenario: currentScenario,
+                    tactics: tactics,
+                    managerLevel: manager.level
+                })
             });
-            let data = await response.json();
-            document.getElementById('rating-value').innerHTML = data.rating;
-            document.getElementById('eval-narrative').innerHTML = data.narrative;
-            document.getElementById('eval-strengths').innerHTML = data.strengths;
-            document.getElementById('eval-critiques').innerHTML = data.weaknesses;
-            document.getElementById('roast-text').innerHTML = `🔥 "${data.roast}"`;
-            let isWin = parseFloat(data.rating) >= 6.5;
-            document.getElementById('outcome-banner').className = `result-banner ${isWin ? 'win' : 'lose'}`;
-            document.getElementById('outcome-banner').innerHTML = isWin ? "✓ TACTICAL BREAKTHROUGH - THE CROWD ROARS" : "✗ TACTICAL DISASTER - THE KIT MAN IS DISAPPOINTED";
-            let xpGain = Math.floor(parseFloat(data.rating) * 8) + 20;
+            
+            currentEvaluation = await response.json();
+            
+            // Update results UI
+            document.getElementById('rating-value').innerHTML = currentEvaluation.rating;
+            document.getElementById('match-narrative').innerHTML = currentEvaluation.narrative;
+            document.getElementById('strengths-text').innerHTML = currentEvaluation.strengths;
+            document.getElementById('weaknesses-text').innerHTML = currentEvaluation.weaknesses;
+            document.getElementById('improvement-text').innerHTML = currentEvaluation.improvements || currentEvaluation.whatYouMissed;
+            document.getElementById('roast-text').innerHTML = `🔥 "${currentEvaluation.roast}"`;
+            
+            let ratingNum = parseFloat(currentEvaluation.rating);
+            let outcome = currentEvaluation.outcome || (ratingNum >= 6.5 ? "WIN" : (ratingNum >= 4 ? "DRAW" : "LOSS"));
+            let banner = document.getElementById('result-banner');
+            if (outcome === "WIN") {
+                banner.className = "result-banner win";
+                banner.innerHTML = "🏆 VICTORY! 🏆";
+            } else if (outcome === "DRAW") {
+                banner.className = "result-banner draw";
+                banner.innerHTML = "🤝 DRAW 🤝";
+            } else {
+                banner.className = "result-banner lose";
+                banner.innerHTML = "💔 DEFEAT 💔";
+            }
+            
+            // XP Calculation
+            let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
             addXP(xpGain);
             manager.matches++;
             saveManager();
             updateUI();
-            navigate('screen-evaluation');
-        } catch(e) { alert("AI service error. Check your Vercel environment variables."); navigate('screen-modes'); }
+            
+            navigate('screen-results');
+        } catch (e) {
+            console.error(e);
+            alert("Error analyzing tactics. Please try again.");
+            navigate('screen-menu');
+        }
     }
-    window.startScenario = startScenario;
-    window.submitToAI = submitToAI;
+
+    function nextScenario() {
+        selectDifficulty(currentDifficulty);
+    }
+
+    window.selectDifficulty = selectDifficulty;
+    window.submitTactics = submitTactics;
+    window.nextScenario = nextScenario;
     window.navigate = navigate;
+    
     loadManager();
-    updateUI();
 </script>
 </body>
 </html>
