@@ -358,6 +358,7 @@
             font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.5;
+            white-space: pre-line;
         }
 
         .loading-container {
@@ -396,7 +397,7 @@
 <body>
 
 <div class="app-container">
-    <!-- LOGIN SCREEN (just username) -->
+    <!-- LOGIN -->
     <div id="screen-login" class="screen active">
         <div class="login-header">
             <div class="login-icon">⚽</div>
@@ -422,7 +423,7 @@
             <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text-tertiary);">
                 <span>📊 XP: <span id="profile-xp">0</span>/<span id="profile-xp-max">100</span></span>
                 <span>🏆 Matches: <span id="profile-matches">0</span></span>
-                <span>⭐ High Score: <span id="profile-high">0</span></span>
+                <span>⭐ Avg Rating: <span id="profile-avg">0.0</span></span>
             </div>
         </div>
 
@@ -441,10 +442,9 @@
             <div class="difficulty-title" style="color: #dc2626;">HARD</div>
             <div class="difficulty-desc">2+ setbacks (red cards, injuries)</div>
         </div>
-        <button class="btn btn-secondary" id="reset-progress-btn" style="margin-top: 16px;">Reset Progress</button>
     </div>
 
-    <!-- SCENARIO SCREEN -->
+    <!-- SCENARIO -->
     <div id="screen-scenario" class="screen">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
             <span class="level-badge" id="difficulty-badge">EASY</span>
@@ -455,7 +455,7 @@
             <div id="setbacks-container" style="margin: 8px 0;"></div>
             <p id="scenario-description" class="text-secondary" style="font-size: 13px; line-height: 1.5;"></p>
         </div>
-        <div class="formation-image" id="formation-image">
+        <div class="formation-image">
             <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px;">Opponent Formation</div>
             <div id="formation-diagram" class="formation-diagram">⚽ Loading formation... ⚽</div>
         </div>
@@ -505,7 +505,8 @@
         xp: 0,
         level: 1,
         matches: 0,
-        highestRating: 0
+        totalRating: 0,      // sum of all ratings for average calculation
+        avgRating: 0
     };
 
     let currentDifficulty = "";
@@ -521,8 +522,7 @@
         if (saved) {
             manager = JSON.parse(saved);
         } else {
-            // Default values
-            manager = { name: "Manager", xp: 0, level: 1, matches: 0, highestRating: 0 };
+            manager = { name: "Manager", xp: 0, level: 1, matches: 0, totalRating: 0, avgRating: 0 };
         }
         updateUI();
     }
@@ -536,11 +536,15 @@
         document.getElementById('profile-xp').innerHTML = manager.xp;
         document.getElementById('profile-xp-max').innerHTML = needed;
         document.getElementById('profile-matches').innerHTML = manager.matches;
-        document.getElementById('profile-high').innerHTML = manager.highestRating;
+        let avg = manager.matches > 0 ? (manager.totalRating / manager.matches).toFixed(1) : "0.0";
+        document.getElementById('profile-avg').innerHTML = avg;
     }
 
-    function addXP(amount) {
-        manager.xp += amount;
+    function addXPAndRating(rating) {
+        manager.xp += Math.floor(rating * 8) + 20;
+        manager.totalRating += rating;
+        manager.matches++;
+        // level up logic
         let needed = manager.level * 100;
         let leveled = false;
         while (manager.xp >= needed && manager.level < 50) {
@@ -555,14 +559,6 @@
         }
         saveManager();
         updateUI();
-    }
-
-    function updateHighestRating(rating) {
-        if (rating > manager.highestRating) {
-            manager.highestRating = rating;
-            saveManager();
-            updateUI();
-        }
     }
 
     function navigate(screenId) {
@@ -581,15 +577,6 @@
         saveManager();
         updateUI();
         navigate('screen-menu');
-    };
-
-    // Reset progress
-    document.getElementById('reset-progress-btn').onclick = () => {
-        if (confirm("Are you sure you want to reset ALL your progress? This cannot be undone.")) {
-            manager = { name: manager.name, xp: 0, level: 1, matches: 0, highestRating: 0 };
-            saveManager();
-            updateUI();
-        }
     };
 
     // Difficulty selection
@@ -700,11 +687,7 @@
             }
             let xpGain = Math.floor(ratingNum * 8) + 20;
             document.getElementById('xp-earned').innerHTML = `+${xpGain} XP`;
-            addXP(xpGain);
-            updateHighestRating(ratingNum);
-            manager.matches++;
-            saveManager();
-            updateUI();
+            addXPAndRating(ratingNum);
             navigate('screen-results');
         } catch (e) {
             console.error(e);
