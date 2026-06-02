@@ -6,29 +6,38 @@ export default async function handler(req, res) {
     const { difficulty, scenario, tactics, managerLevel } = req.body;
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-    const prompt = `You are a brilliant, poetic football tactical analyst. Your task is to evaluate the manager's submitted plan and produce a **dramatic, detailed, formation‑specific match narrative** in the style of a tactical genius.
+    if (!OPENROUTER_API_KEY) {
+        console.error('Missing OPENROUTER_API_KEY');
+        return res.status(500).json({ error: 'Server misconfiguration: missing API key' });
+    }
+
+    // Use the latest Gemini 3 Flash Preview model
+    const model = 'google/gemini-3-flash-preview';
+
+    const prompt = `You are a legendary, sarcastic, and highly creative football tactical analyst. Your task is to evaluate the manager's submitted plan and produce a UNIQUE, DRAMATIC, AND DETAILED response. NEVER use generic phrases like "your plan lacked detail" or "you didn't specify". Always refer to specific formations, player movements, and timestamps.
 
 DIFFICULTY: ${difficulty.toUpperCase()}
 OPPONENT FORMATION: ${scenario.opponentFormation}
 SETBACKS: ${scenario.setbacks ? scenario.setbacks.join(', ') : 'None'}
-SCENARIO CONTEXT: ${scenario.description}
+SCENARIO: ${scenario.description}
 MANAGER'S TACTICS: "${tactics}"
 MANAGER LEVEL: ${managerLevel}
 
-Now, **ignore generic feedback**. Instead, write a vivid, step‑by‑step breakdown of what happened in the match based on their tactics. Use dramatic language, formations, and specific moments. **The response must be ONLY valid JSON** with these fields:
+IMPORTANT RULES:
+- Rating must be BETWEEN 1.0 AND 10.0, and MUST VARY. Do not give 5.5 every time. If tactics are brilliant, give 8.5-9.5. If terrible, give 2.0-4.0.
+- The "tacticalBoard" field MUST contain ASCII diagrams or creative visual formatting (like in the examples: use arrows, brackets, player positions). Make it at least 6 lines long.
+- The "whyItWorkedOrFailed" MUST quote the manager's own words and explain exactly what happened in a specific minute (e.g., "83rd minute – your instruction to 'drop deep' allowed...").
+- The "dramaSequence" MUST be a minute-by-minute thriller with timestamps (e.g., "82' — ...", "87' — ...", "90+3' — ...") and end with a final score.
+
+Return ONLY valid JSON. No extra text. Use this exact structure:
 
 {
-    "rating": (number 1-10),
-    "outcome": "WIN/DRAW/LOSS",
-    "tacticalBoard": "A detailed, visually formatted tactical explanation (use ASCII art if helpful) describing how the manager's setup worked or failed against the opponent's formation. Explain specific positional battles, pressing traps, or structural weaknesses exploited. Minimum 6 lines, be creative.",
-    "whyItWorkedOrFailed": "2-3 paragraphs explaining exactly why the tactics succeeded or collapsed. Reference the manager's own words. Describe the key moments (e.g., '83rd minute – your deep block baited their overload...'), player movements, and tactical shifts.",
-    "dramaSequence": "A thrilling, minute‑by‑minute narrative of the final 10-15 minutes of the match (from the scenario's time onward). Include specific actions (a tackle, a long ball, a substitution). End with the final score and emotional reaction."
-}
-
-IMPORTANT: 
-- If the tactics are vague or poor, the outcome should be a loss or draw, but still give a detailed, entertaining explanation.
-- Use formations like "3-4-2", "low block", "counter‑pressing" appropriately.
-- The response MUST be pure JSON – no extra text.`;
+    "rating": 7.8,
+    "outcome": "WIN",
+    "tacticalBoard": "A detailed, visual tactical explanation with ASCII art. Minimum 6 lines.",
+    "whyItWorkedOrFailed": "2-3 paragraphs, quoting the manager's tactics, explaining key moments with specific minutes.",
+    "dramaSequence": "Minute-by-minute narrative: '75' — ...', '82' — ...', '90+2' — ... Final score: 2-1.'"
+}`;
 
     try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -40,25 +49,35 @@ IMPORTANT:
                 'X-Title': 'Tactical IQ Tester'
             },
             body: JSON.stringify({
-                model: 'google/gemini-2.0-flash-exp:free',
+                model: model,
                 messages: [{ role: 'user', content: prompt }],
-                temperature: 0.9
+                temperature: 1.0  // High creativity
             })
         });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('OpenRouter error:', response.status, errorText);
+            throw new Error(`API returned ${response.status}: ${errorText}`);
+        }
 
         const data = await response.json();
         let aiResponse = data.choices[0].message.content;
         aiResponse = aiResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '');
         const result = JSON.parse(aiResponse);
+        
+        // Validate rating
+        let rating = parseFloat(result.rating);
+        if (isNaN(rating)) rating = 6.0;
+        result.rating = Math.min(10, Math.max(1, rating));
+        
         res.status(200).json(result);
     } catch (error) {
         console.error('AI Error:', error);
-        res.status(200).json({
-            rating: 5.5,
-            outcome: "DRAW",
-            tacticalBoard: "🔻 THE TACTICAL SETUP\nYou placed your team in a vague, undefined shape. The opponent's 4-4-2 easily passed around your non-existent press. Your defensive line held too high without cover.\n\nPlaintext\n[Opponent CM] ---> [Your exposed DM space]\nv\n[Easy through ball]",
-            whyItWorkedOrFailed: "Your plan lacked specific instructions. Without clear triggers, your players hesitated. The opponent scored from a simple cross in the 85th minute. You failed to adjust to their width.",
-            dramaSequence: "84' – A hopeful long ball drifts over your static backline. Their striker outmuscles your defender and slots home. 1-0 down.\n90+3' – A desperate long throw into the box is scrambled in for a scrappy equaliser. Final whistle: 1-1. A point salvaged, but the performance was unconvincing."
+        // Return a clear error so user knows what's wrong
+        res.status(500).json({ 
+            error: 'AI service failed. Check your OpenRouter API key and that Gemini 3 Flash is available.',
+            details: error.message
         });
     }
 }
