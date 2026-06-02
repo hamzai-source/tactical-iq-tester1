@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+.vercel/
+*.log
+.env
+<<<<<<<< HEAD:git.gitingore
+.env.local
+========
+>>>>>>>> 454e7a64881e885cac91ab1ec005a84d7c143911:git.gitignore
