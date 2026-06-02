@@ -28,7 +28,7 @@ Now, **ignore generic feedback**. Instead, write a vivid, step‑by‑step break
 IMPORTANT: 
 - If the tactics are vague or poor, the outcome should be a loss or draw, but still give a detailed, entertaining explanation.
 - Use formations like "3-4-2", "low block", "counter‑pressing" appropriately.
-- The response MUST be pure JSON – no extra text.`
+- The response MUST be pure JSON – no extra text.`;
 
     try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -53,7 +53,6 @@ IMPORTANT:
         res.status(200).json(result);
     } catch (error) {
         console.error('AI Error:', error);
-        // Fallback with proper structure
         res.status(200).json({
             rating: 5.5,
             outcome: "DRAW",
